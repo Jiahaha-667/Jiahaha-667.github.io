@@ -1,0 +1,1916 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="基于《计网复习.pdf》的计算机网络期末可视化闯关复习系统">
+  <title>计算机网络期末冲刺</title>
+  <style>
+:root {
+  --ink: #10233f;
+  --muted: #64748b;
+  --paper: #f4f8fc;
+  --surface: #ffffff;
+  --surface-2: #eaf2f8;
+  --line: #d8e3ec;
+  --cyan: #0d9fba;
+  --cyan-dark: #08788f;
+  --purple: #6957d9;
+  --green: #16a36a;
+  --orange: #ed8a34;
+  --red: #d84b5b;
+  --yellow: #f3c85b;
+  --shadow: 0 16px 42px rgba(22, 57, 88, .09);
+  --radius: 18px;
+  --sidebar: 268px;
+  --topbar: 76px;
+  font-family: "Microsoft YaHei UI", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+html[data-theme="dark"] {
+  --ink: #e6f0f8;
+  --muted: #9aacc0;
+  --paper: #0c1826;
+  --surface: #122337;
+  --surface-2: #182d43;
+  --line: #294158;
+  --cyan: #3bc4dc;
+  --cyan-dark: #76d8e8;
+  --purple: #9b8cf2;
+  --green: #46c98f;
+  --orange: #f0a45f;
+  --red: #ef7480;
+  --yellow: #f4d579;
+  --shadow: 0 18px 48px rgba(0, 0, 0, .22);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; background: var(--paper); color: var(--ink); }
+button, input, select { font: inherit; }
+button { color: inherit; }
+button:not(:disabled) { cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--cyan) 40%, transparent);
+  outline-offset: 2px;
+}
+.skip-link { position: fixed; top: -50px; left: 12px; z-index: 100; padding: 10px 14px; background: var(--ink); color: var(--surface); border-radius: 8px; }
+.skip-link:focus { top: 8px; }
+.app-shell { min-height: 100vh; }
+.topbar {
+  position: fixed; inset: 0 0 auto 0; z-index: 40; height: var(--topbar);
+  display: grid; grid-template-columns: var(--sidebar) minmax(240px, 1fr) auto; align-items: center;
+  background: color-mix(in srgb, var(--surface) 94%, transparent); border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(16px);
+}
+.brand {
+  border: 0; background: transparent; height: 100%; display: flex; align-items: center; gap: 12px;
+  padding: 0 22px; text-align: left; border-right: 1px solid var(--line);
+}
+.brand strong, .brand small { display: block; }
+.brand strong { font-size: 16px; letter-spacing: .04em; }
+.brand small { color: var(--muted); font-family: Consolas, monospace; margin-top: 4px; font-size: 10px; }
+.brand-mark { width: 32px; height: 32px; position: relative; display: grid; place-items: center; }
+.brand-mark::before, .brand-mark::after, .brand-mark i {
+  content: ""; position: absolute; width: 7px; height: 7px; border: 2px solid var(--cyan); border-radius: 50%; background: var(--surface);
+}
+.brand-mark::before { top: 1px; left: 12px; }
+.brand-mark::after { bottom: 1px; left: 2px; }
+.brand-mark i:first-child { right: 1px; bottom: 2px; }
+.brand-mark i:nth-child(2), .brand-mark i:nth-child(3) { width: 2px; height: 24px; border: 0; border-radius: 0; background: var(--cyan); transform-origin: center; }
+.brand-mark i:nth-child(2) { transform: rotate(32deg); }
+.brand-mark i:nth-child(3) { transform: rotate(-34deg); }
+.top-status { padding: 0 28px; max-width: 620px; }
+.status-copy { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+.status-copy span { color: var(--muted); }
+.progress-track { height: 5px; border-radius: 10px; background: var(--surface-2); overflow: hidden; }
+.progress-track i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--cyan), var(--purple)); transition: width .45s ease; }
+.top-metrics { display: flex; align-items: center; gap: 8px; padding-right: 18px; }
+.top-metrics > span { padding: 0 12px; border-right: 1px solid var(--line); }
+.top-metrics small, .top-metrics b { display: block; }
+.top-metrics small { color: var(--muted); font-size: 10px; }
+.top-metrics b { font-family: Consolas, monospace; font-size: 14px; margin-top: 2px; }
+.icon-button {
+  min-width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+  display: inline-grid; place-items: center; position: relative;
+}
+.icon-button:hover { border-color: var(--cyan); color: var(--cyan-dark); }
+.icon-button em { position: absolute; top: -6px; right: -5px; min-width: 17px; height: 17px; padding: 0 4px; display: grid; place-items: center; border-radius: 10px; background: var(--red); color: white; font-size: 9px; font-style: normal; }
+.danger-ghost:hover { color: var(--red); border-color: var(--red); }
+.sidebar {
+  position: fixed; z-index: 35; top: var(--topbar); left: 0; bottom: 0; width: var(--sidebar);
+  background: var(--surface); border-right: 1px solid var(--line); overflow-y: auto; padding: 20px 14px;
+}
+.side-head { display: flex; justify-content: space-between; align-items: center; padding: 0 10px 14px; }
+.eyebrow { color: var(--cyan-dark); font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.nav-home, #chapterNav button, .side-footer button {
+  width: 100%; border: 0; background: transparent; border-radius: 12px; text-align: left; display: flex; align-items: center;
+}
+.nav-home { gap: 10px; padding: 12px; font-weight: 700; margin-bottom: 10px; }
+.nav-home span, .side-footer button span { width: 25px; text-align: center; color: var(--cyan-dark); }
+.nav-home:hover, .nav-home.active, .side-footer button:hover { background: var(--surface-2); }
+#chapterNav { display: grid; gap: 4px; }
+#chapterNav button { position: relative; padding: 10px 10px 10px 45px; min-height: 58px; }
+#chapterNav button:hover, #chapterNav button.active { background: var(--surface-2); }
+#chapterNav button.active::before { content: ""; position: absolute; left: 0; width: 3px; height: 30px; border-radius: 0 4px 4px 0; background: var(--cyan); }
+.chapter-number { position: absolute; left: 10px; top: 13px; width: 25px; color: var(--muted); font: 700 11px Consolas, monospace; }
+.chapter-nav-copy { min-width: 0; flex: 1; }
+.chapter-nav-copy b { display: flex; align-items: center; gap: 5px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chapter-nav-copy small { color: var(--muted); font: 10px Consolas, monospace; }
+.mini-progress { height: 3px; margin-top: 7px; border-radius: 4px; background: var(--line); }
+.mini-progress i { display: block; height: 100%; border-radius: inherit; background: var(--green); }
+.tiny-tag { padding: 2px 5px; border-radius: 5px; font-size: 8px; color: #8a4a0a; background: #fff1d1; }
+html[data-theme="dark"] .tiny-tag { color: #ffdba1; background: #58401e; }
+.wrong-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); margin-left: auto; flex: none; }
+.side-footer { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 12px; display: grid; gap: 4px; }
+.side-footer button { gap: 8px; padding: 11px 10px; font-size: 12px; font-weight: 700; }
+main { padding: calc(var(--topbar) + 32px) 38px 70px calc(var(--sidebar) + 38px); }
+.view { display: none; max-width: 1380px; margin: auto; animation: view-in .32s ease both; }
+.view.active { display: block; }
+@keyframes view-in { from { opacity: 0; transform: translateY(8px); } }
+.hero {
+  min-height: 430px; display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 52px;
+  padding: 28px 0 52px; border-bottom: 1px solid var(--line);
+}
+.hero-copy h1, .page-intro h1 { margin: 18px 0; font-size: clamp(44px, 5vw, 74px); line-height: .98; letter-spacing: -.06em; }
+.hero-copy h1 em { color: var(--cyan-dark); font-style: normal; }
+.hero-copy p { max-width: 630px; color: var(--muted); line-height: 1.8; font-size: 16px; }
+.live-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; background: var(--green); box-shadow: 0 0 0 5px color-mix(in srgb, var(--green) 16%, transparent); }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.primary-button, .secondary-button, .danger-button {
+  border-radius: 11px; padding: 12px 18px; font-weight: 800; border: 1px solid transparent; transition: .2s ease;
+}
+.primary-button { background: var(--ink); color: var(--surface); }
+.primary-button:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.primary-button span { margin-left: 18px; }
+.secondary-button { background: var(--surface); border-color: var(--line); }
+.secondary-button:hover { color: var(--cyan-dark); border-color: var(--cyan); }
+.danger-button { background: var(--red); color: white; }
+.full { width: 100%; }
+.packet-map { position: relative; padding: 26px; border: 1px solid var(--line); border-radius: 24px; background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
+.packet-map::before { content: ""; position: absolute; inset: 0; opacity: .18; background-image: radial-gradient(var(--muted) .7px, transparent .7px); background-size: 16px 16px; pointer-events: none; }
+.packet-map-head { position: relative; display: flex; justify-content: space-between; font: 11px Consolas, monospace; color: var(--muted); }
+.packet-map-head b { color: var(--green); }
+.route-line { position: relative; display: flex; align-items: center; justify-content: center; margin: 65px 0; }
+.route-node { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font-weight: 800; font-size: 12px; z-index: 1; box-shadow: 0 8px 18px rgba(34, 74, 108, .08); }
+.route-node.source { color: white; background: var(--cyan-dark); border-color: var(--cyan-dark); }
+.route-node.target { color: var(--green); border-color: var(--green); }
+.route-segment { position: relative; flex: 1; height: 2px; background: repeating-linear-gradient(90deg, var(--cyan) 0 6px, transparent 6px 11px); }
+.packet { position: absolute; top: -9px; left: 0; color: var(--purple); font-size: 16px; animation: packet-move 3.5s ease-in-out infinite; }
+@keyframes packet-move { 0% { left: 0; } 50%, 100% { left: calc(300% + 140px); } }
+.terminal-copy { position: relative; display: grid; grid-template-columns: 70px 1fr; gap: 9px 12px; padding: 16px; border-radius: 12px; background: var(--surface-2); font: 10px/1.5 Consolas, monospace; }
+.terminal-copy span { color: var(--muted); }
+.terminal-copy span i { display: inline-block; width: 5px; height: 5px; margin-right: 5px; border-radius: 50%; background: var(--green); }
+.dashboard-section { padding: 52px 0 10px; }
+.section-heading, .panel-head, .page-intro { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+.section-heading h2, .panel h2 { margin: 7px 0 0; font-size: 25px; letter-spacing: -.03em; }
+.section-heading > p { color: var(--muted); font-size: 13px; }
+.stat-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 22px; }
+.stat-card { padding: 20px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
+.stat-card span { color: var(--muted); font-size: 11px; }
+.stat-card b { display: block; margin: 12px 0 4px; font: 800 26px Consolas, monospace; }
+.stat-card small { color: var(--green); font-size: 10px; }
+.dashboard-grid { display: grid; grid-template-columns: 1.4fr .6fr; gap: 16px; padding-top: 42px; }
+.panel { padding: 26px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.pdf-chip, .source-chip { padding: 6px 9px; color: var(--cyan-dark); background: color-mix(in srgb, var(--cyan) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--cyan) 28%, var(--line)); border-radius: 8px; font: 10px Consolas, monospace; }
+.focus-groups { margin-top: 24px; display: grid; gap: 24px; }
+.focus-group h3 { font-size: 11px; color: var(--muted); letter-spacing: .1em; }
+.focus-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.focus-tags button { padding: 9px 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); font-size: 11px; }
+.focus-tags button:hover { color: var(--cyan-dark); border-color: var(--cyan); }
+.focus-tags .must-focus { border-left: 3px solid var(--orange); }
+.pulse-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; color: var(--purple); background: color-mix(in srgb, var(--purple) 12%, transparent); }
+.advice-list { display: grid; gap: 12px; margin-top: 25px; }
+.advice-item { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.advice-item:last-child { border: 0; }
+.advice-item i { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 7px; color: var(--cyan-dark); background: var(--surface-2); font: 10px Consolas, monospace; }
+.advice-item b { font-size: 12px; }
+.advice-item p { color: var(--muted); margin: 5px 0 0; font-size: 11px; line-height: 1.5; }
+.quick-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 22px; }
+.quick-grid button { padding: 20px; text-align: left; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); transition: .2s; }
+.quick-grid button:hover { transform: translateY(-3px); border-color: var(--cyan); box-shadow: var(--shadow); }
+.quick-grid span { color: var(--cyan-dark); font: 10px Consolas, monospace; }
+.quick-grid b, .quick-grid small { display: block; }
+.quick-grid b { margin: 17px 0 7px; }
+.quick-grid small { color: var(--muted); line-height: 1.4; }
+.source-note { margin-top: 44px; padding: 18px 22px; display: grid; grid-template-columns: 170px 1fr; border: 1px solid var(--line); border-left: 4px solid var(--purple); border-radius: 12px; background: var(--surface); }
+.source-note p { margin: 0; color: var(--muted); line-height: 1.7; font-size: 12px; }
+
+/* Chapter */
+.chapter-hero { position: relative; padding: 26px 28px; border-radius: 22px; background: var(--ink); color: var(--surface); overflow: hidden; }
+html[data-theme="dark"] .chapter-hero { color: #edf5fa; background: #09131f; border: 1px solid var(--line); }
+.chapter-hero::after { content: ""; position: absolute; width: 330px; height: 330px; right: -120px; top: -180px; border: 55px solid color-mix(in srgb, var(--cyan) 30%, transparent); border-radius: 50%; }
+.chapter-hero-top { position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 18px; }
+.chapter-kicker { color: #8eddeb; font: 11px Consolas, monospace; letter-spacing: .1em; }
+.chapter-hero h1 { margin: 14px 0 10px; font-size: clamp(34px, 4vw, 56px); letter-spacing: -.05em; }
+.chapter-hero p { max-width: 760px; margin: 0; color: #b9c8d6; line-height: 1.7; }
+.chapter-source { display: flex; flex-wrap: wrap; justify-content: end; align-content: start; gap: 7px; }
+.chapter-source span { padding: 7px 10px; border: 1px solid #40536a; border-radius: 8px; font: 10px Consolas, monospace; white-space: nowrap; }
+.chapter-progress-box { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; margin-top: 24px; }
+.chapter-progress-box .progress-track { background: #32465b; }
+.chapter-progress-box small { color: #c6d4df; font: 11px Consolas, monospace; }
+.chapter-tabs { position: sticky; top: var(--topbar); z-index: 20; display: flex; gap: 5px; margin: 14px 0 24px; padding: 7px; border: 1px solid var(--line); border-radius: 13px; background: color-mix(in srgb, var(--surface) 95%, transparent); backdrop-filter: blur(14px); overflow-x: auto; }
+.chapter-tabs button { border: 0; border-radius: 8px; background: transparent; padding: 10px 13px; white-space: nowrap; color: var(--muted); font-size: 12px; }
+.chapter-tabs button:hover, .chapter-tabs button.active { color: var(--ink); background: var(--surface-2); }
+.lesson-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; align-items: start; }
+.lesson-main { min-width: 0; display: grid; gap: 16px; }
+.lesson-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; scroll-margin-top: 140px; }
+.lesson-card-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 19px 22px; border-bottom: 1px solid var(--line); }
+.lesson-card-head h2 { margin: 0; font-size: 18px; }
+.lesson-card-head span:first-child { display: flex; align-items: center; gap: 10px; }
+.card-index { color: var(--cyan-dark); font: 10px Consolas, monospace; }
+.card-body { padding: 23px; }
+.plain-talk { padding: 18px; border-radius: 13px; background: var(--surface-2); line-height: 1.75; }
+.plain-talk b { color: var(--cyan-dark); }
+.definition-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.definition-item { padding: 15px; border: 1px solid var(--line); border-radius: 11px; }
+.definition-item b { display: block; font-size: 13px; margin-bottom: 7px; }
+.definition-item p { color: var(--muted); font-size: 12px; line-height: 1.65; margin: 0; }
+.memory-strip { margin-top: 16px; padding: 14px 17px; border-left: 4px solid var(--purple); background: color-mix(in srgb, var(--purple) 8%, var(--surface)); border-radius: 0 10px 10px 0; }
+.memory-strip small { color: var(--muted); }
+.memory-strip b { display: block; margin-top: 5px; }
+.exam-template { padding: 19px; border-radius: 12px; background: #102c3e; color: #e5f5fa; }
+.exam-template pre { margin: 11px 0 0; white-space: pre-wrap; font: 12px/1.8 "Microsoft YaHei UI", sans-serif; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { padding: 5px 8px; border-radius: 7px; font-size: 9px; font-weight: 800; }
+.tag.must { color: #9b4b00; background: #fff0d4; }
+.tag.error { color: #915a00; background: #fff4bb; }
+.tag.figure { color: #493aaa; background: #ece8ff; }
+.tag.calc { color: #00738c; background: #dff8fc; }
+html[data-theme="dark"] .tag.must { color: #ffd3a5; background: #594027; }
+html[data-theme="dark"] .tag.error { color: #ffe69a; background: #574c20; }
+html[data-theme="dark"] .tag.figure { color: #cdc4ff; background: #393366; }
+html[data-theme="dark"] .tag.calc { color: #a7eff8; background: #16434c; }
+.lesson-aside { position: sticky; top: 145px; display: grid; gap: 12px; }
+.aside-card { padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.aside-card h3 { margin: 0 0 12px; font-size: 13px; }
+.aside-card p, .aside-card li { color: var(--muted); font-size: 11px; line-height: 1.6; }
+.aside-card ul { padding-left: 17px; }
+.aside-actions { display: grid; gap: 8px; }
+.aside-actions button { width: 100%; }
+.visual-stage { position: relative; min-height: 220px; padding: 22px; border: 1px dashed color-mix(in srgb, var(--cyan) 48%, var(--line)); border-radius: 14px; background: color-mix(in srgb, var(--cyan) 4%, var(--surface)); overflow: hidden; }
+.stage-title { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 18px; }
+.stage-title h3 { margin: 0; font-size: 15px; }
+.stage-title small { color: var(--muted); }
+.control-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.field label { display: block; color: var(--muted); margin-bottom: 6px; font-size: 10px; font-weight: 700; }
+.field input, .field select { width: 100%; padding: 10px 11px; color: var(--ink); border: 1px solid var(--line); border-radius: 9px; background: var(--surface); }
+.field-inline { display: grid; grid-template-columns: 1fr 94px; }
+.field-inline input { border-radius: 9px 0 0 9px; }
+.field-inline select { border-radius: 0 9px 9px 0; border-left: 0; }
+.result-box { margin-top: 16px; padding: 16px; border-radius: 11px; background: var(--surface); border: 1px solid var(--line); font: 12px/1.8 Consolas, monospace; }
+.result-box strong { color: var(--cyan-dark); }
+.calc-steps { counter-reset: step; display: grid; gap: 8px; margin-top: 10px; }
+.calc-steps p { margin: 0; padding: 10px; border-left: 2px solid var(--cyan); background: var(--surface-2); }
+.formula { font-family: Consolas, monospace; color: var(--purple); }
+.compare-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.compare-table th, .compare-table td { border-bottom: 1px solid var(--line); padding: 12px; text-align: left; line-height: 1.55; }
+.compare-table th { color: var(--muted); font-size: 10px; background: var(--surface-2); }
+.compare-table tr:last-child td { border-bottom: 0; }
+.compare-table .selected { color: var(--green); font-weight: 800; background: color-mix(in srgb, var(--green) 7%, transparent); }
+.interactive-button { padding: 9px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); font-size: 11px; font-weight: 800; }
+.interactive-button:hover, .interactive-button.active { color: var(--cyan-dark); border-color: var(--cyan); background: color-mix(in srgb, var(--cyan) 8%, var(--surface)); }
+.button-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.visual-note { color: var(--muted); font-size: 11px; line-height: 1.6; margin-top: 12px; }
+.pdf-original { border-left: 3px solid var(--cyan); padding-left: 13px; }
+.pdf-original::before { content: "【PDF 原文结论】"; display: block; color: var(--cyan-dark); font-size: 9px; font-weight: 800; margin-bottom: 7px; }
+.supplement::before { content: "【零基础解释】"; display: block; color: var(--purple); font-size: 9px; font-weight: 800; margin-bottom: 7px; }
+
+/* Visualizers */
+.mux { display: grid; grid-template-columns: 1fr 70px 2fr 70px 1fr; gap: 8px; align-items: center; min-height: 150px; }
+.signal-stack { display: grid; gap: 7px; }
+.signal { padding: 8px; color: white; border-radius: 7px; text-align: center; font: 10px Consolas, monospace; }
+.signal.a { background: var(--cyan-dark); }.signal.b { background: var(--purple); }.signal.c { background: var(--green); }
+.mux-box { padding: 12px 5px; text-align: center; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: 10px; }
+.shared-channel { position: relative; height: 30px; border: 2px solid var(--line); border-radius: 20px; overflow: hidden; }
+.shared-channel i { position: absolute; width: 30%; height: 100%; background: linear-gradient(90deg, var(--cyan), var(--purple), var(--green)); animation: channel-flow 2s linear infinite; }
+@keyframes channel-flow { from { left: -30%; } to { left: 100%; } }
+.mux-comparison { display: grid; gap: 12px; margin-top: 18px; }
+.mux-row { display: grid; grid-template-columns: 70px 1fr; align-items: center; gap: 12px; }
+.mux-bar { display: grid; grid-template-columns: repeat(8, 1fr); height: 34px; border-radius: 7px; overflow: hidden; border: 1px solid var(--line); }
+.mux-bar i { border-right: 1px solid color-mix(in srgb, white 65%, transparent); }
+.mux-bar.fdm { grid-template-columns: 2fr 3fr 3fr; }.mux-bar.fdm i { background: var(--cyan); }.mux-bar.fdm i:nth-child(2){background:var(--purple)}.mux-bar.fdm i:nth-child(3){background:var(--green)}
+.mux-bar.tdm i:nth-child(3n+1), .mux-bar.stdm i:nth-child(4n+1){background:var(--cyan)}.mux-bar.tdm i:nth-child(3n+2), .mux-bar.stdm i:nth-child(3n+2){background:var(--purple)}.mux-bar.tdm i:nth-child(3n), .mux-bar.stdm i:nth-child(2n){background:var(--green)}
+.frame-strip { display: flex; min-height: 90px; border: 2px solid var(--line); border-radius: 12px; overflow: hidden; }
+.frame-field { flex: 1; min-width: 55px; border: 0; border-right: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; padding: 8px; }
+.frame-field:nth-child(4), .frame-field:nth-child(5) { flex: 2; }
+.frame-field:hover, .frame-field.active { color: white; background: var(--purple); }
+.frame-field b, .frame-field small { display: block; }.frame-field small { margin-top: 6px; font: 8px Consolas, monospace; opacity: .7; }
+.draggable-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; min-height: 48px; padding: 7px; border: 1px dashed var(--line); border-radius: 9px; }
+.draggable { padding: 8px 11px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); user-select: none; }
+.draggable.dragging { opacity: .35; }
+.xor-grid { overflow-x: auto; padding-bottom: 8px; font: 14px/1.9 Consolas, monospace; }
+.xor-step { width: max-content; min-width: 100%; display: grid; grid-template-columns: 34px 1fr; border-bottom: 1px solid var(--line); padding: 6px 0; }
+.xor-step span:first-child { color: var(--muted); }
+.xor-step .active-bits { color: var(--purple); background: color-mix(in srgb, var(--purple) 10%, transparent); border-radius: 4px; }
+.error-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+.error-card { padding: 13px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); text-align: left; }
+.error-card:hover { border-color: var(--orange); }
+.bus-stage { padding: 52px 30px 35px; position: relative; min-height: 200px; }
+.bus-line { height: 5px; background: var(--ink); border-radius: 5px; position: relative; }
+.host { position: absolute; top: 10px; width: 54px; height: 54px; display: grid; place-items: center; border: 2px solid var(--cyan); border-radius: 12px; background: var(--surface); font-weight: 900; z-index: 2; }
+.host.a { left: 25px; }.host.b { right: 25px; }
+.wave { position: absolute; top: -5px; width: 12px; height: 14px; border-radius: 7px; opacity: 0; }
+.wave.from-a { left: 0; background: var(--cyan); }.wave.from-b { right: 0; background: var(--purple); }
+.bus-stage.running .wave { opacity: 1; }
+.bus-stage.running .from-a { animation: wave-a 2.2s linear forwards; }.bus-stage.running .from-b { animation: wave-b 2.2s linear .45s forwards; }
+@keyframes wave-a { to { left: calc(50% - 6px); } } @keyframes wave-b { to { right: calc(50% - 6px); } }
+.collision { position: absolute; left: calc(50% - 26px); top: -28px; width: 52px; height: 52px; display: grid; place-items: center; opacity: 0; color: white; background: var(--red); clip-path: polygon(50% 0,61% 31%,88% 12%,73% 42%,100% 50%,72% 61%,88% 88%,59% 72%,50% 100%,40% 72%,12% 88%,28% 60%,0 50%,28% 41%,12% 12%,40% 30%); }
+.bus-stage.collided .collision { opacity: 1; animation: pop .35s ease; }
+@keyframes pop { from { transform: scale(.2) rotate(-25deg); } }
+.sim-status { margin-top: 30px; text-align: center; font-size: 12px; color: var(--muted); }
+.ip-frame { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.ip-frame button { min-height: 50px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); font-size: 10px; }
+.ip-frame button.wide { grid-column: span 2; }.ip-frame button.fullrow { grid-column: 1 / -1; }
+.ip-frame button:hover, .ip-frame button.active { color: white; background: var(--cyan-dark); }
+.graph-wrap { display: grid; grid-template-columns: minmax(360px, 1fr) minmax(260px, .7fr); gap: 18px; }
+.graph-svg { width: 100%; min-height: 360px; }
+.graph-svg line { stroke: var(--line); stroke-width: 4; }
+.graph-svg text { fill: var(--muted); font: 12px Consolas, monospace; }
+.graph-svg .weight { fill: var(--ink); font-size: 11px; }
+.graph-svg circle { fill: var(--surface); stroke: var(--muted); stroke-width: 2; transition: .2s; }
+.graph-svg .settled circle { fill: var(--green); stroke: var(--green); }.graph-svg .settled .node-label { fill: white; }
+.graph-svg .candidate circle { stroke: var(--orange); stroke-width: 4; }
+.graph-log { max-height: 360px; overflow: auto; }
+.graph-log ol { padding-left: 20px; }
+.graph-log li { color: var(--muted); margin-bottom: 10px; font-size: 11px; line-height: 1.6; }
+.nat-scene, .tcp-scene { display: grid; grid-template-columns: 1fr 1fr 1.2fr 1fr; gap: 12px; align-items: center; min-height: 180px; }
+.network-device { position: relative; padding: 16px 8px; text-align: center; border: 2px solid var(--line); border-radius: 12px; background: var(--surface); font-size: 11px; }
+.network-device.router { border-color: var(--purple); }
+.packet-path { height: 3px; background: var(--line); position: relative; }
+.packet-path i { position: absolute; top: -8px; width: 17px; height: 17px; border-radius: 4px; background: var(--cyan); opacity: 0; }
+.packet-path.running i { opacity: 1; animation: packet-one 1.2s linear forwards; }
+@keyframes packet-one { from { left: 0; } to { left: calc(100% - 17px); } }
+.nat-table { margin-top: 14px; }
+.buffer { min-height: 110px; padding: 8px; display: flex; align-items: end; gap: 3px; border: 2px solid var(--line); border-top: 0; background: var(--surface); }
+.buffer i { flex: 1; height: 22px; background: var(--cyan); border-radius: 3px; animation: buffer-pulse 1s ease infinite alternate; }
+@keyframes buffer-pulse { to { height: 68px; } }
+.rwnd-gate { width: 50px; padding: 10px 5px; border: 2px solid var(--purple); text-align: center; font: 10px Consolas, monospace; }
+.cwnd-chart { width: 100%; height: 330px; overflow: visible; }
+.cwnd-chart .axis { stroke: var(--muted); stroke-width: 1.5; }.cwnd-chart .grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 6; }
+.cwnd-chart .curve { fill: none; stroke: var(--cyan); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+.cwnd-chart .threshold { stroke: var(--orange); stroke-dasharray: 7 5; }
+.cwnd-chart text { fill: var(--muted); font: 11px Consolas, monospace; }
+.sequence-diagram { display: grid; grid-template-columns: 130px 1fr 130px; gap: 10px; min-height: 330px; position: relative; }
+.lifeline { position: relative; text-align: center; font-weight: 800; }
+.lifeline::after { content: ""; position: absolute; top: 35px; bottom: 0; left: 50%; border-left: 2px dashed var(--line); }
+.message-stack { padding-top: 38px; display: grid; gap: 18px; }
+.message-arrow { position: relative; padding: 12px; border-top: 2px solid var(--muted); opacity: .2; transition: .3s; font: 11px Consolas, monospace; }
+.message-arrow::after { content: ""; position: absolute; top: -6px; right: 0; border: 5px solid transparent; border-left-color: var(--muted); }
+.message-arrow.reverse::after { right: auto; left: 0; border-left-color: transparent; border-right-color: var(--muted); }
+.message-arrow.active { opacity: 1; color: var(--cyan-dark); border-color: var(--cyan); transform: translateY(-3px); }
+.message-arrow.active::after { border-left-color: var(--cyan); }.message-arrow.reverse.active::after { border-left-color: transparent; border-right-color: var(--cyan); }
+.state-pill { display: inline-block; margin-top: 7px; padding: 3px 6px; border-radius: 5px; color: var(--purple); background: color-mix(in srgb, var(--purple) 10%, transparent); font: 9px "Microsoft YaHei UI"; }
+
+/* Quiz */
+.quiz-list { display: grid; gap: 13px; }
+.quiz-item { padding: 19px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); }
+.quiz-item.correct { border-color: var(--green); }.quiz-item.wrong { border-color: var(--red); }
+.quiz-meta { display: flex; gap: 6px; margin-bottom: 12px; }
+.difficulty { padding: 3px 7px; color: var(--muted); background: var(--surface-2); border-radius: 5px; font-size: 9px; }
+.quiz-item h3 { margin: 0 0 13px; font-size: 14px; line-height: 1.6; }
+.options { display: grid; gap: 7px; }
+.option { display: flex; gap: 9px; align-items: start; padding: 10px; border: 1px solid var(--line); border-radius: 9px; font-size: 12px; line-height: 1.5; }
+.option:hover { border-color: var(--cyan); }
+.option input { margin-top: 3px; accent-color: var(--cyan-dark); }
+.answer-input { width: min(100%, 430px); padding: 10px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--surface); }
+.feedback { display: none; margin-top: 12px; padding: 12px; border-radius: 8px; font-size: 11px; line-height: 1.7; }
+.feedback.show { display: block; }.correct .feedback { color: var(--green); background: color-mix(in srgb, var(--green) 9%, transparent); }.wrong .feedback { color: var(--red); background: color-mix(in srgb, var(--red) 8%, transparent); }
+.quiz-submit { margin-top: 12px; }
+.chapter-pass { padding: 24px; text-align: center; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
+.chapter-pass .score-ring { margin: auto; }
+.score-ring { width: 105px; height: 105px; display: grid; place-items: center; border-radius: 50%; background: conic-gradient(var(--green) var(--score, 0%), var(--surface-2) 0); position: relative; }
+.score-ring::before { content: ""; position: absolute; inset: 9px; border-radius: 50%; background: var(--surface); }
+.score-ring b { position: relative; font: 800 21px Consolas, monospace; }
+
+/* Wrong book / exam / overlays */
+.page-intro { padding: 28px 0 35px; border-bottom: 1px solid var(--line); }
+.page-intro h1 { font-size: clamp(42px, 5vw, 68px); margin: 12px 0; }
+.page-intro p { max-width: 680px; color: var(--muted); line-height: 1.7; }
+.exam-clock { min-width: 140px; padding: 17px; text-align: center; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); }
+.exam-clock small, .exam-clock b { display: block; }.exam-clock small { color: var(--muted); }.exam-clock b { margin-top: 7px; font: 24px Consolas, monospace; }
+.exam-content, #wrongbookContent { padding-top: 22px; }
+.exam-start { max-width: 740px; margin: 30px auto; padding: 38px; text-align: center; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
+.exam-start ul { display: inline-block; text-align: left; color: var(--muted); line-height: 2; }
+.exam-result-grid { display: grid; grid-template-columns: 220px 1fr; gap: 18px; }
+.chapter-breakdown { display: grid; gap: 8px; }
+.breakdown-row { display: grid; grid-template-columns: 130px 1fr 55px; gap: 10px; align-items: center; font-size: 11px; }
+.wrong-list { display: grid; gap: 10px; }
+.wrong-card { padding: 18px; display: grid; grid-template-columns: 1fr auto; gap: 14px; border: 1px solid var(--line); border-left: 4px solid var(--red); border-radius: 13px; background: var(--surface); }
+.wrong-card h3 { margin: 0 0 8px; font-size: 13px; }.wrong-card p { color: var(--muted); font-size: 11px; line-height: 1.6; }
+.empty-state { padding: 60px 20px; text-align: center; border: 1px dashed var(--line); border-radius: 16px; background: var(--surface); }
+.empty-state span { display: block; font-size: 38px; color: var(--green); }.empty-state p { color: var(--muted); }
+.drawer-backdrop, .modal-backdrop { position: fixed; inset: 0; z-index: 70; opacity: 0; visibility: hidden; background: rgba(5, 16, 28, .46); transition: .25s; }
+.drawer-backdrop.open, .modal-backdrop.open { opacity: 1; visibility: visible; }
+.drawer { position: fixed; z-index: 71; top: 0; right: 0; bottom: 0; width: min(430px, 92vw); padding: 25px; background: var(--surface); transform: translateX(100%); transition: transform .28s ease; overflow-y: auto; }
+.drawer.open { transform: translateX(0); }
+.drawer-head { display: flex; justify-content: space-between; align-items: start; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.drawer-head h2 { margin: 6px 0; }
+#drawerContent { margin: 18px 0; }
+.modal-backdrop { display: grid; place-items: center; }
+.modal { width: min(430px, 90vw); padding: 30px; border-radius: 18px; background: var(--surface); text-align: center; box-shadow: var(--shadow); transform: translateY(10px); }
+.modal-icon { width: 52px; height: 52px; margin: auto; display: grid; place-items: center; border-radius: 50%; color: var(--red); background: color-mix(in srgb, var(--red) 10%, transparent); font-size: 25px; }
+.modal p { color: var(--muted); line-height: 1.7; }.modal > div { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+.toast-region { position: fixed; z-index: 100; right: 22px; bottom: 22px; display: grid; gap: 8px; pointer-events: none; }
+.toast { max-width: 360px; padding: 12px 16px; border: 1px solid var(--line); border-left: 4px solid var(--green); border-radius: 9px; background: var(--surface); box-shadow: var(--shadow); animation: toast-in .25s ease; font-size: 12px; }
+.toast.error { border-left-color: var(--red); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } }
+.mobile-only { display: none; }
+
+@media (max-width: 1160px) {
+  :root { --sidebar: 232px; }
+  .stat-grid { grid-template-columns: repeat(3, 1fr); }
+  .quick-grid { grid-template-columns: repeat(3, 1fr); }
+  .lesson-layout { grid-template-columns: 1fr; }
+  .lesson-aside { position: static; grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 860px) {
+  .mobile-only { display: inline-grid; }
+  .topbar { grid-template-columns: 52px 1fr auto; padding: 0 8px; }
+  .topbar > .mobile-only { grid-column: 1; grid-row: 1; }
+  .brand { grid-column: 2; border: 0; padding: 0 8px; }
+  .brand-mark { display: none; }
+  .top-status { display: none; }
+  .top-metrics > span, .danger-ghost { display: none; }
+  .top-metrics { grid-column: 3; padding: 0; }
+  .sidebar { transform: translateX(-100%); transition: transform .25s ease; width: min(310px, 88vw); box-shadow: var(--shadow); }
+  .sidebar.open { transform: translateX(0); }
+  main { padding: calc(var(--topbar) + 22px) 18px 55px; }
+  .hero { grid-template-columns: 1fr; gap: 20px; }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .chapter-hero-top { display: block; }
+  .chapter-source { justify-content: start; margin-top: 20px; }
+  .graph-wrap { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .hero-copy h1 { font-size: 45px; }
+  .packet-map { padding: 18px; }
+  .route-node { width: 45px; height: 45px; font-size: 10px; }
+  .route-line { margin: 48px 0; }
+  .terminal-copy { grid-template-columns: 54px 1fr; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-card { padding: 15px; }
+  .quick-grid { grid-template-columns: 1fr 1fr; }
+  .source-note { grid-template-columns: 1fr; gap: 8px; }
+  .definition-grid, .control-grid, .error-cards, .lesson-aside { grid-template-columns: 1fr; }
+  .chapter-hero { padding: 22px 19px; }
+  .chapter-tabs { top: var(--topbar); margin-inline: -6px; }
+  .lesson-card-head, .card-body { padding: 17px; }
+  .mux { grid-template-columns: 1fr 45px; }
+  .shared-channel { grid-column: 1 / -1; }
+  .frame-strip { overflow-x: auto; }
+  .frame-field { flex: none; width: 70px; }
+  .nat-scene, .tcp-scene { grid-template-columns: 1fr; }
+  .packet-path { height: 35px; width: 3px; margin: auto; }
+  .sequence-diagram { grid-template-columns: 75px 1fr 75px; }
+  .exam-result-grid { grid-template-columns: 1fr; }
+  .wrong-card { grid-template-columns: 1fr; }
+  .page-intro { align-items: start; flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">跳到主要内容</a>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="icon-button mobile-only" id="menuToggle" aria-label="打开章节导航">☰</button>
+      <button class="brand" data-view="home" aria-label="返回学习总览">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>计算机网络</strong><small>期末冲刺 / Packet Lab</small></span>
+      </button>
+      <div class="top-status">
+        <div class="status-copy"><span id="currentLabel">学习总览</span><b id="globalProgress">0%</b></div>
+        <div class="progress-track" aria-label="总学习进度"><i id="globalProgressBar"></i></div>
+      </div>
+      <div class="top-metrics">
+        <span><small>正确率</small><b id="headerAccuracy">—</b></span>
+        <button class="icon-button" id="wrongBookButton" title="错题本" aria-label="打开错题本">错 <em id="wrongBadge">0</em></button>
+        <button class="icon-button" id="themeToggle" title="切换深浅色模式" aria-label="切换深浅色模式">◐</button>
+        <button class="icon-button danger-ghost" id="resetButton" title="重置学习记录" aria-label="重置学习记录">↺</button>
+      </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="side-head">
+        <span class="eyebrow">学习路线</span>
+        <button class="icon-button mobile-only" id="menuClose" aria-label="关闭章节导航">×</button>
+      </div>
+      <button class="nav-home active" data-view="home"><span>⌂</span>学习总览</button>
+      <nav id="chapterNav" aria-label="课程章节"></nav>
+      <div class="side-footer">
+        <button data-view="exam"><span>⌁</span>模拟考试</button>
+        <button data-view="wrongbook"><span>!</span>我的错题</button>
+      </div>
+    </aside>
+
+    <main id="mainContent" tabindex="-1">
+      <section id="homeView" class="view active" aria-labelledby="homeTitle">
+        <div class="hero">
+          <div class="hero-copy">
+            <span class="eyebrow"><i class="live-dot"></i> PDF 驱动 · 本地保存</span>
+            <h1 id="homeTitle">把每个数据包，<br><em>送到正确答案。</em></h1>
+            <p>面向零基础的 12 关期末冲刺路线。先听懂人话，再掌握术语，最后用可视化训练把必考题做熟。</p>
+            <div class="hero-actions">
+              <button class="primary-button" id="continueButton">从第一章开始 <span>→</span></button>
+              <button class="secondary-button" data-filter="must">只学必考</button>
+            </div>
+          </div>
+          <div class="packet-map" aria-label="学习路径示意图">
+            <div class="packet-map-head"><span>今日数据包</span><b id="packetStatus">READY</b></div>
+            <div class="route-line">
+              <span class="route-node source">你</span>
+              <i class="route-segment"><b class="packet">◆</b></i>
+              <span class="route-node">理解</span>
+              <i class="route-segment"></i>
+              <span class="route-node">练习</span>
+              <i class="route-segment"></i>
+              <span class="route-node target">及格+</span>
+            </div>
+            <div class="terminal-copy">
+              <span><i></i> SOURCE</span><b>期末复习 / 目标：掌握必考链路</b>
+              <span><i></i> ROUTE</span><b id="routeAdvice">正在计算今日最优学习路径…</b>
+            </div>
+          </div>
+        </div>
+
+        <section class="dashboard-section">
+          <div class="section-heading">
+            <div><span class="eyebrow">学习状态</span><h2>你的冲刺仪表盘</h2></div>
+            <p id="welcomeCopy">第一次来？没关系，我们从“比特是什么”开始。</p>
+          </div>
+          <div class="stat-grid" id="statGrid"></div>
+        </section>
+
+        <section class="dashboard-grid">
+          <article class="panel focus-map">
+            <div class="panel-head"><div><span class="eyebrow">考试重点地图</span><h2>优先拿稳这些分</h2></div><span class="pdf-chip">PDF 23 页</span></div>
+            <div id="focusMap"></div>
+          </article>
+          <article class="panel today-plan">
+            <div class="panel-head"><div><span class="eyebrow">动态建议</span><h2>今天学什么</h2></div><span class="pulse-icon">⌁</span></div>
+            <div id="todayAdvice"></div>
+          </article>
+        </section>
+
+        <section class="dashboard-section">
+          <div class="section-heading">
+            <div><span class="eyebrow">快速入口</span><h2>选择你的复习模式</h2></div>
+          </div>
+          <div class="quick-grid">
+            <button id="quickStart"><span>01</span><b>从头学习</b><small>按建议顺序打基础</small></button>
+            <button id="quickContinue"><span>02</span><b>继续上次</b><small>回到最近学习位置</small></button>
+            <button data-filter="must"><span>03</span><b>必考速通</b><small>集中拿下八大重点</small></button>
+            <button data-view="wrongbook"><span>04</span><b>错题重练</b><small>针对薄弱点补洞</small></button>
+            <button data-view="exam"><span>05</span><b>模拟考试</b><small>混合题型限时自测</small></button>
+          </div>
+        </section>
+
+        <section class="source-note">
+          <b>关于内容来源</b>
+          <p>当前 PDF 是 23 页“计网复习二次整理版”，其中引用教材 P2–P263。系统将二者并列标注；补充的零基础解释和练习会明确标为【零基础解释】或【补充例题】。</p>
+        </section>
+      </section>
+
+      <section id="chapterView" class="view" aria-live="polite">
+        <div id="chapterContent"></div>
+      </section>
+
+      <section id="examView" class="view" aria-labelledby="examTitle">
+        <div class="page-intro exam-intro">
+          <div><span class="eyebrow">综合检测</span><h1 id="examTitle">模拟考试</h1><p>从 12 章题库抽取混合题型。交卷后按章节诊断，不靠“蒙对”制造虚假安全感。</p></div>
+          <div class="exam-clock"><small>本次用时</small><b id="examTimer">00:00</b></div>
+        </div>
+        <div id="examContent" class="exam-content"></div>
+      </section>
+
+      <section id="wrongbookView" class="view" aria-labelledby="wrongTitle">
+        <div class="page-intro">
+          <div><span class="eyebrow">薄弱链路</span><h1 id="wrongTitle">错题本</h1><p>错误不是污点，是路由表里一条需要更新的记录。</p></div>
+          <button class="secondary-button" id="practiceWrongButton">只练错题</button>
+        </div>
+        <div id="wrongbookContent"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer" id="wrongDrawer" aria-hidden="true" aria-labelledby="drawerTitle">
+    <div class="drawer-head"><div><span class="eyebrow">快速查看</span><h2 id="drawerTitle">最近错题</h2></div><button class="icon-button" id="drawerClose" aria-label="关闭">×</button></div>
+    <div id="drawerContent"></div>
+    <button class="primary-button full" data-view="wrongbook">打开完整错题本</button>
+  </aside>
+
+  <div class="modal-backdrop" id="confirmModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <span class="modal-icon">↺</span>
+      <h2 id="modalTitle">重置所有学习记录？</h2>
+      <p>进度、成绩、错题、收藏和最近位置都会清空。此操作无法撤销。</p>
+      <div><button class="secondary-button" id="cancelReset">保留记录</button><button class="danger-button" id="confirmReset">确认重置</button></div>
+    </div>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+  <script>
+/* 计算机网络期末冲刺
+ * 知识主来源：计网复习.pdf（23 页二次整理版）
+ * 教材页码来自 PDF 内部引用；补充解释与题目均明确标注。
+ */
+
+const STORAGE_KEY = "cnFinalSprint.v1";
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+const shuffle = array => [...array].sort(() => Math.random() - 0.5);
+const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+
+const chapterData = [
+  {
+    id: "foundation", number: 1, title: "计算机网络基础", short: "网络基础", must: false,
+    pdf: "PDF 第 13–14 页", book: "教材 P2、P5、P10、P12、P16、P19–P21",
+    tags: ["高频基础", "计算题"], visual: "delay",
+    intro: "网络像一套跨城市快递系统：主机负责发收“包裹”，路由器决定下一站，核心网络负责把分组一跳一跳送过去。",
+    memory: "发送时延看“把数据推上链路要多久”，传播时延看“信号在路上跑多久”。",
+    exam: "互联网由数量极大的各种计算机网络互连形成。网络边缘由主机（端系统）组成，网络核心由大量网络和路由器组成。分组交换采用存储转发，路由器接收完整分组后查转发表并转发。",
+    common: "简述分组交换的工作过程；计算发送时延、传播时延和总时延。",
+    error: "把带宽当成信号传播速度；数据长度用 Byte 却忘记乘 8。",
+    terms: [
+      ["网络 / 互连网 / 互联网", "网络连接计算机；互连网通过路由器连接多个网络；Internet 是全球最大的特定互连网。"],
+      ["边缘与核心", "边缘是主机和应用，核心是网络与路由器。主机既叫端系统；路由器像中转站。"],
+      ["C/S 与 P2P", "C/S 中客户主动请求、服务器等待服务；P2P 中主机既可请求也可提供服务。"],
+      ["分组交换", "报文切成较小分组，路由器采用存储转发；链路带宽按需动态共享。"],
+      ["WAN / MAN / LAN / PAN", "范围依次可理解为广域、城市、单位/校园、个人设备周边。"],
+      ["性能指标", "速率、带宽、发送/传播/处理/排队时延、RTT、时延带宽积与利用率。"]
+    ],
+    questions: [
+      q("f1", "single", "路由器在分组交换中的核心工作是？", ["运行用户应用", "存储分组、查表并转发", "把数据永久保存", "只负责生成信号"], "存储分组、查表并转发", "路由器位于网络核心，按转发表决定下一跳。"),
+      q("f2", "single", "长度为 8 Mbit 的数据以 4 Mbit/s 发送，发送时延是多少？", ["0.5 s", "2 s", "4 s", "32 s"], "2 s", "发送时延 = 数据长度 / 发送速率 = 8/4 = 2 s。", "计算题"),
+      q("f3", "judge", "带宽越大，电磁波在光纤中的传播速度就一定越快。", ["正确", "错误"], "错误", "带宽描述最高数据率，不等于信号在介质中的传播速度。", "易错"),
+      q("f4", "fill", "总时延 = 发送时延 + 传播时延 + ____ + 排队时延。", [], "处理时延", "PDF 给出的总时延包含发送、传播、处理和排队时延。")
+    ]
+  },
+  {
+    id: "physical", number: 2, title: "物理层", short: "物理层", must: false,
+    pdf: "PDF 第 14–16 页", book: "教材 P42、P44、P48、P56、P63",
+    tags: ["图题", "高频基础"], visual: "mux",
+    intro: "物理层做的是最朴素也最重要的事：把 0 和 1 变成能在线缆或空气中传播的信号，再送到另一端。",
+    memory: "FDM 分频带，TDM 分时间，STDM 看谁有数据就动态给谁。",
+    exam: "物理层的任务是在传输媒体上传输比特流。数据是运送消息的实体，信号是数据的电气或电磁表现。导引型媒体包括双绞线、同轴电缆、光纤；非导引型媒体包括无线电、微波、红外等。",
+    common: "比较 FDM、TDM 和 STDM；区分导引型与非导引型媒体。",
+    error: "把数据和信号说成同一个概念；认为 TDM 是按频率切分。",
+    terms: [
+      ["数据与信号", "数据承载消息；信号是数据在传输介质中的电气或电磁表现。"],
+      ["模拟 / 数字信号", "模拟信号参数连续变化；数字信号参数取离散值。"],
+      ["导引型媒体", "信号沿固体媒体传播：双绞线、同轴电缆、光纤。"],
+      ["非导引型媒体", "信号在自由空间传播：无线电、微波、红外等。"],
+      ["复用与分用", "多路信号共享一条信道叫复用；接收端再把它们分开叫分用。"],
+      ["宽带接入", "ADSL 利用电话线；HFC 是光纤同轴混合网；FTTx 表示光纤到路边、楼宇或家庭。"]
+    ],
+    questions: [
+      q("p1", "single", "下列哪一项属于导引型传输媒体？", ["微波", "红外", "光纤", "无线电"], "光纤", "光纤是固体传输媒体，信号沿其传播。"),
+      q("p2", "single", "统计时分复用 STDM 的特点是？", ["固定占用频带", "每个用户固定时间片", "按需动态分配时间片", "只能传模拟信号"], "按需动态分配时间片", "STDM 不让空闲用户固定占用时间片，因此利用率更高。"),
+      q("p3", "judge", "FDM 让多路信号在同一时间使用不同频带。", ["正确", "错误"], "正确", "FDM 的切分维度是频率。"),
+      q("p4", "fill", "ADSL 主要利用现有的____用户线提供宽带接入。", [], ["电话", "电话用户线"], "PDF P63 的记忆点：ADSL 利用现有电话用户线。")
+    ]
+  },
+  {
+    id: "datalink", number: 3, title: "数据链路层与 PPP", short: "数据链路层", must: false,
+    pdf: "PDF 第 16–17 页", book: "教材 P71、P73、P78、P81",
+    tags: ["图题", "易错"], visual: "ppp",
+    intro: "如果物理层只管送 0 和 1，数据链路层就负责给一段比特“装信封”：确定帧的边界、让特殊字符安全通过，并检查有没有传错。",
+    memory: "PPP 字段顺序：F A C 协议 信息 FCS F；只检错，不纠错。",
+    exam: "数据链路层的基本任务是封装成帧、透明传输和差错检测。PPP 帧依次包含 F、A、C、协议、信息、FCS、F。F 为 0x7E，A 为 0xFF，C 为 0x03。",
+    common: "画出 PPP 帧格式并说明各字段；解释透明传输。",
+    error: "漏写末尾 F；把 FCS 说成纠错字段；混淆链路和数据链路。",
+    terms: [
+      ["链路 / 数据链路", "链路是相邻节点间的物理线路；数据链路是物理链路加上必要协议。"],
+      ["帧", "数据链路层的协议数据单元，相当于这一层发送的完整“信封”。"],
+      ["点对点 / 广播信道", "点对点是一对一；广播信道允许多个站点共享。"],
+      ["封装成帧", "在数据前后加控制信息，识别一帧从哪里开始、在哪里结束。"],
+      ["透明传输", "即使数据里出现与控制字符相同的内容，也能通过转义等方式原样传输。"],
+      ["PPP", "点到点链路常用协议，简单、支持多种网络层协议、能检错但不自动纠错。"]
+    ],
+    questions: [
+      q("d1", "single", "PPP 帧中的 FCS 字段用于？", ["流量控制", "差错检测", "自动纠错", "指定网络层协议"], "差错检测", "FCS 是帧检验序列，用于发现差错。"),
+      q("d2", "single", "PPP 标志字段 F 的典型值是？", ["0x7E", "0xFF", "0x03", "0x00"], "0x7E", "F 标记帧的开始和结束，值为 0x7E。"),
+      q("d3", "judge", "PPP 检测到错误后会在本帧内自动纠正错误比特。", ["正确", "错误"], "错误", "PPP 只检错，不负责自动纠错。", "易错"),
+      q("d4", "sort", "把 PPP 帧字段拖到正确顺序。", ["信息", "F", "FCS", "A", "协议", "C", "F"], ["F", "A", "C", "协议", "信息", "FCS", "F"], "首尾都是 F，中间依次是 A、C、协议、信息、FCS。", "必考")
+    ]
+  },
+  {
+    id: "crc", number: 4, title: "CRC 循环冗余检验", short: "CRC", must: true,
+    pdf: "PDF 第 3 页", book: "教材 P76",
+    tags: ["必考", "计算题", "易错"], visual: "crc",
+    intro: "CRC 像给数据附上一枚由异或运算算出的“指纹”。接收方重新计算；指纹对不上，就知道路上出错了，但它不会替你把错误自动改回来。",
+    memory: "阶数 r → 补 r 个 0 → 模 2 除法 → 取 r 位余数 → M + R。",
+    exam: "发送方在原始数据 M 后补 r 个 0，用生成多项式对应的二进制除数 P 进行模 2 除法，所得 r 位余数为 R，发送帧为 M+R。接收方用同一 P 相除，余数为 0 表示未检测到差错，非 0 表示检测到差错。",
+    common: "给定 M 和生成多项式 P，求冗余码与发送帧；说明接收端如何检验。",
+    error: "模 2 除法借位；余数位数不等于 r；说“余数为 0 证明绝对无错”。",
+    terms: [
+      ["生成多项式", "题目通常给出二进制形式 P；若 P 有 n 位，则阶数 r=n−1。"],
+      ["模 2 除法", "减法就是逐位异或：相同得 0，不同得 1；不借位、不进位。"],
+      ["冗余码 R", "位数必须为 r；不足时左侧补 0。"],
+      ["发送帧", "原始数据 M 后直接拼接冗余码 R。"],
+      ["接收端检验", "收到的帧除以同一 P。余数为 0 是“未检测到错误”，不是数学上保证绝对无错。"]
+    ],
+    questions: [
+      q("c1", "single", "生成多项式二进制为 1101，它的阶数 r 是？", ["2", "3", "4", "1101"], "3", "4 位多项式的最高次数为 3，因此补 3 个 0。"),
+      q("c2", "single", "CRC 接收端相除后余数不为 0，说明？", ["一定可自动纠错", "检测到传输差错", "数据一定正确", "生成多项式无效"], "检测到传输差错", "非 0 余数表示检测到差错。"),
+      q("c3", "judge", "模 2 除法中的减法本质是异或，不借位也不进位。", ["正确", "错误"], "正确", "这是 CRC 计算的核心规则。"),
+      q("c4", "calc", "若生成多项式有 5 位，原始数据末尾应先补____个 0。", [], ["4", 4], "阶数 r=5−1=4，因此补 4 个 0。", "计算题")
+    ]
+  },
+  {
+    id: "csma", number: 5, title: "局域网与 CSMA/CD", short: "CSMA/CD", must: true,
+    pdf: "PDF 第 3–4、17 页", book: "教材 P84、P85、P87、P89、P95、P101",
+    tags: ["必考", "图题"], visual: "csma",
+    intro: "共享总线像一条窄走廊：每个人先听有没有人说话，再开口；说话时也继续听，一旦撞话就停下，随机等一会儿再说。",
+    memory: "先听后发，边发边听，冲突停止，随机重发；争用期 = 2τ。",
+    exam: "CSMA/CD 即载波监听多点接入/碰撞检测。站点发送前监听，空闲才发送；发送时继续监听，若碰撞则停止并发送强化碰撞信号，再按截断二进制指数退避算法随机等待后重传。",
+    common: "为什么监听到空闲仍会碰撞？为什么争用期是 2τ？",
+    error: "认为监听空闲就绝不碰撞；把 CSMA/CD 用于交换式全双工以太网。",
+    terms: [
+      ["媒体接入控制", "决定多个站点如何共享广播信道，可分静态划分和动态接入。"],
+      ["载波监听", "发送前和发送中都检测信道上是否已有信号。"],
+      ["多点接入", "多个站点连接在同一共享传输媒体上。"],
+      ["碰撞检测", "边发送边监听；发现碰撞立即停止并发强化碰撞信号。"],
+      ["争用期 2τ", "最坏情况下，发送方需要一个来回的端到端传播时延才知道碰撞。"],
+      ["使用场景", "传统半双工共享总线式以太网；交换式全双工链路不发生这种碰撞。"],
+      ["以太网利用率", "PDF 结论：参数 a 越小极限利用率越高；利用率 30% 已属重载。"],
+      ["网桥", "工作在数据链路层，查 MAC 地址表决定转发或过滤。"]
+    ],
+    questions: [
+      q("s1", "single", "CSMA/CD 的争用期等于？", ["τ/2", "τ", "2τ", "4τ"], "2τ", "最晚需要一个信号往返时间才能检测到远端碰撞。"),
+      q("s2", "single", "检测到碰撞后，站点首先应当？", ["继续发送完", "立即停止并发送强化碰撞信号", "切换全双工", "永久退出"], "立即停止并发送强化碰撞信号", "随后再随机退避和重传。"),
+      q("s3", "judge", "交换式全双工以太网通常仍需要 CSMA/CD。", ["正确", "错误"], "错误", "全双工交换式链路没有共享总线碰撞，因此不再使用 CSMA/CD。"),
+      q("s4", "fill", "A 监听空闲仍可能与 B 碰撞，根本原因是信号存在____时延。", [], "传播", "A 的信号尚未传播到 B，B 也会误以为信道空闲。")
+    ]
+  },
+  {
+    id: "ip", number: 6, title: "网络层与 IP", short: "网络层与 IP", must: false,
+    pdf: "PDF 第 18–21 页", book: "教材 P116–P150；跨层附录 P263",
+    tags: ["高频基础", "计算题"], visual: "ip",
+    intro: "IP 地址像跨网络使用的收件地址，MAC 地址像当前这一段路上交给下一位快递员的标签。IP 负责全程方向，MAC 每一跳都会换。",
+    memory: "多条路由都匹配时，选前缀最长、范围最具体的一条。",
+    exam: "IP 提供无连接、尽最大努力的数据报服务。目的地址与各表项掩码逐项 AND，结果等于网络前缀则匹配；若多项匹配，选择前缀最长的一项。",
+    common: "比较 IP 与 MAC 地址；按最长前缀原则选择转发表项；说明 IP 数据报字段。",
+    error: "认为路由过程中目的 MAC 永远不变；把最长前缀理解为数值最大的前缀。",
+    terms: [
+      ["数据报服务", "不预先建立连接，每个数据报独立选路，网络尽最大努力交付。"],
+      ["虚拟互连网络", "IP 在网络层屏蔽不同物理网络差异，让它们看起来像统一网络。"],
+      ["分类地址", "A/B/C 类开头比特分别为 0、10、110；IPv4 地址共 32 位。"],
+      ["IP 与 MAC", "IP 用于跨网络寻址，通常端到端不变；MAC 用于当前链路交付，每跳重新封装。"],
+      ["IP 数据报", "含版本、首部长度、总长度、标识、标志、片偏移、TTL、协议、检验和、源/目的地址等。"],
+      ["ICMP", "网际控制报文协议，用于报告差错和异常，封装在 IP 数据报中但属于 IP 层。"],
+      ["IPv6", "地址长度从 IPv4 的 32 位扩展为 128 位，并采用更灵活的首部设计。"],
+      ["跨层附录：DNS 顶级域名", "DNS 属于应用层。PDF P263 列出国家顶级域名（cn、us、uk）、通用顶级域名（com、net、org、edu、gov、mil、int）和基础结构域名 arpa。"]
+    ],
+    questions: [
+      q("i1", "single", "转发表中 /16 和 /24 都匹配目标地址，应选择？", ["/16，因为范围大", "/24，因为前缀更长", "随机选择", "两条都转发"], "/24，因为前缀更长", "最长前缀代表更具体的路由。"),
+      q("i2", "single", "IP 数据报每经过一个路由器，通常会变化的是？", ["目的 IP", "源 IP", "链路层源/目的 MAC", "IPv4 地址长度"], "链路层源/目的 MAC", "每一跳都要重新封装链路层帧。"),
+      q("i3", "judge", "ICMP 报文封装在 IP 数据报中，因此 ICMP 属于运输层协议。", ["正确", "错误"], "错误", "ICMP 仍属于 IP 层协议。", "易错"),
+      q("i4", "match", "把概念和作用匹配起来。", [["IP 地址", "跨网络寻址"], ["MAC 地址", "当前链路交付"], ["端口号", "定位主机内应用"]], [["IP 地址", "跨网络寻址"], ["MAC 地址", "当前链路交付"], ["端口号", "定位主机内应用"]], "IP 找主机，MAC 管当前一跳，端口找应用进程。"),
+      q("i5", "single", "PDF P263 中，哪一项属于基础结构域名？", ["com", "cn", "arpa", "edu"], "arpa", "PDF 将 arpa 归为基础结构域名；com、edu 是通用顶级域名，cn 是国家顶级域名。")
+    ]
+  },
+  {
+    id: "routing", number: 7, title: "路由选择算法与协议", short: "路由选择", must: true,
+    pdf: "PDF 第 5–8 页", book: "教材 P157–P160、P164、P168",
+    tags: ["必考", "计算题", "图题"], visual: "routing",
+    intro: "路由算法是在问：从这里到目的地，下一步走谁最划算？RIP 听邻居报距离；Dijkstra 则把全图摊开，每轮确定一个最近节点。",
+    memory: "RIP：15 最大、16 不可达；Dijkstra：每轮从未确定节点中选暂定距离最小者。",
+    exam: "RIP 是自治系统内部的距离向量协议，按经过网络数最少选路，最大距离 15，16 表示不可达，适合小型网络且坏消息传播慢。OSPF 使用链路状态思想；BGP 用于自治系统之间。",
+    common: "按距离向量计算下一跳；逐轮写 Dijkstra 的 N'、距离与前驱。",
+    error: "把 BGP 写成 IGP；RIP 的 16 写成仍可达；Dijkstra 更新时忘记经新节点比较。",
+    terms: [
+      ["静态 / 动态路由", "静态路由人工配置、开销小；动态路由自动更新，能适应拓扑变化。"],
+      ["IGP / EGP", "IGP 用于自治系统 AS 内部；EGP 用于 AS 之间。"],
+      ["RIP", "IGP、距离向量、按网络数计距离；15 最大，16 不可达。"],
+      ["OSPF", "IGP，采用链路状态思想，适合较大网络。"],
+      ["BGP", "AS 之间使用的 EGP，当前主要为 BGP-4。"],
+      ["Dijkstra", "从源点出发，反复确定暂定距离最小节点并松弛其邻边，得到最短路径树。"]
+    ],
+    questions: [
+      q("r1", "single", "RIP 中表示目的网络不可达的距离是？", ["15", "16", "255", "∞ 才可以"], "16", "RIP 最大有效距离为 15，16 表示不可达。"),
+      q("r2", "single", "J 经 H 到 D：c(J,H)=12，D_H(D)=8，总开销为？", ["4", "8", "12", "20"], "20", "距离向量计算 c(J,H)+D_H(D)=12+8=20。"),
+      q("r3", "multi", "下列哪些说法正确？", ["RIP 是 IGP", "OSPF 使用链路状态思想", "BGP 用于 AS 之间", "RIP 适合超大型网络"], ["RIP 是 IGP", "OSPF 使用链路状态思想", "BGP 用于 AS 之间"], "前三项符合 PDF；RIP 只适合小型网络。"),
+      q("r4", "figure", "观察 Dijkstra 训练图：每一轮都应选择尚未确定且暂定距离最小的节点。", ["正确", "错误"], "正确", "这一步把该节点加入 N'，再更新其邻居。", "读图题")
+    ]
+  },
+  {
+    id: "nat", number: 8, title: "私有地址与 NAT", short: "NAT", must: true,
+    pdf: "PDF 第 9 页", book: "教材 P186",
+    tags: ["必考", "判断题"], visual: "nat",
+    intro: "NAT 像宿舍楼前台：内网每个人有自己的房间号，但出门都可共用一个公网门牌；前台用端口转换表记住回来的包该交给谁。",
+    memory: "10/8、172.16/12、192.168/16；私网出公网，要过 NAT。",
+    exam: "私有地址只能在机构内部使用，不能直接在全球互联网路由。NAT 路由器把内部私有地址转换为公网地址，使多个内部主机共享少量公网地址；它缓解 IPv4 地址不足，但影响端到端透明性。",
+    common: "判断地址是否为私有地址；描述 NAT 转换和返回过程。",
+    error: "把整个 172.0.0.0/8 都当私有地址；认为 NAT 不需要维护转换表。",
+    terms: [
+      ["10.0.0.0/8", "范围 10.0.0.0–10.255.255.255。"],
+      ["172.16.0.0/12", "范围 172.16.0.0–172.31.255.255；172.32.0.1 不属于。"],
+      ["192.168.0.0/16", "范围 192.168.0.0–192.168.255.255。"],
+      ["NAT 转换", "出站时修改源 IP（常连端口一起改）；回包时查转换表还原内部地址。"],
+      ["优点与影响", "节约公网 IPv4 地址，但外部主动访问内部主机更困难，影响端到端透明性。"]
+    ],
+    questions: [
+      q("n1", "single", "下列哪个是私有 IPv4 地址？", ["8.8.8.8", "172.20.0.1", "172.32.0.1", "1.1.1.1"], "172.20.0.1", "172.16.0.0–172.31.255.255 属于私有地址。"),
+      q("n2", "single", "NAT 回包时判断应交给哪台内网主机，主要依赖？", ["DNS 缓存", "NAT 转换表", "RIP 距离", "CRC 余数"], "NAT 转换表", "表中记录公网地址/端口与内部地址/端口的映射。"),
+      q("n3", "judge", "192.168.1.10 可直接作为全球互联网路由中的公网地址。", ["正确", "错误"], "错误", "它属于私有地址，需经 NAT 等方式访问公网。"),
+      q("n4", "judge", "172.32.0.1 属于 172.16.0.0/12 私有地址块。", ["正确", "错误"], "错误", "该私有块到 172.31.255.255 为止。", "易错")
+    ]
+  },
+  {
+    id: "transport", number: 9, title: "运输层、UDP、TCP 与端口", short: "运输层", must: false,
+    pdf: "PDF 第 20–21 页", book: "教材 P211、P213、P215、P219、P225",
+    tags: ["高频基础"], visual: "transport",
+    intro: "IP 地址负责把包送到一台主机，端口号再把包交给这台主机里的具体应用。运输层提供的是“进程到进程”的逻辑通信。",
+    memory: "IP 找主机，端口找应用；UDP 轻快，TCP 可靠。",
+    exam: "运输层为应用进程提供逻辑通信。UDP 无连接、尽最大努力、面向报文、开销小；TCP 面向连接、可靠交付、全双工、面向字节流。连续 ARQ 配合滑动窗口可连续发送多个分组，提高信道利用率。",
+    common: "比较 UDP 和 TCP；说明端口作用；解释连续 ARQ 与滑动窗口。",
+    error: "说运输层只是主机到主机；认为 UDP 绝对不会丢包或 TCP 按独立报文保留边界。",
+    terms: [
+      ["运输层", "为不同主机中的应用进程提供逻辑通信。"],
+      ["端口号", "主机内应用进程的逻辑入口；IP 找到主机后，再由端口定位应用。"],
+      ["UDP", "无连接、尽最大努力、面向报文、首部开销小。"],
+      ["TCP", "面向连接、可靠交付、全双工、面向字节流，每条连接只有两个端点。"],
+      ["连续 ARQ", "发送方不必每发一个就停等确认，可以连续发送多个分组。"],
+      ["滑动窗口", "用窗口约束可连续发送的序号范围，收到累计确认后窗口向前滑。"]
+    ],
+    questions: [
+      q("t1", "single", "端口号的作用是？", ["定位物理网卡", "定位主机内应用进程", "确定链路带宽", "检查帧差错"], "定位主机内应用进程", "IP 找主机，端口号找该主机里的应用。"),
+      q("t2", "single", "下列哪项是 TCP 的特点？", ["无连接", "尽最大努力且不可靠", "面向字节流", "只支持单向通信"], "面向字节流", "TCP 还面向连接、可靠、全双工。"),
+      q("t3", "judge", "连续 ARQ 允许发送方在收到前一个分组确认前继续发送后续分组。", ["正确", "错误"], "正确", "它减少逐个停等，提高链路利用率。"),
+      q("t4", "fill", "IP 地址负责找到主机，____负责找到主机中的具体应用程序。", [], ["端口", "端口号"], "端口号完成进程级分用。")
+    ]
+  },
+  {
+    id: "flow", number: 10, title: "TCP 流量控制", short: "流量控制", must: true,
+    pdf: "PDF 第 9 页", book: "教材 P236",
+    tags: ["必考", "动画"], visual: "flow",
+    intro: "接收方像一个杯子，处理速度有限。它通过 rwnd 告诉发送方“我还剩多少空间”，发送方不能不管杯子大小一直猛倒。",
+    memory: "流量控制管的是：接收方受不受得了。",
+    exam: "TCP 流量控制由接收方通过确认报文段通告接收窗口 rwnd，控制发送方发送速率，防止接收缓存溢出。发送窗口不能超过 rwnd；rwnd=0 时暂停普通数据发送，并使用持续计时器防止死锁。",
+    common: "谁控制谁？rwnd=0 怎么办？为什么需要持续计时器？",
+    error: "把 rwnd 当拥塞窗口；认为 rwnd=0 后发送方再也不能发任何探测。",
+    terms: [
+      ["控制方向", "接收方通告，发送方遵守；目的是保护接收方缓存。"],
+      ["接收窗口 rwnd", "表示接收方当前还能接收的数据量；变大可多发，变小要少发。"],
+      ["发送窗口", "实际发送不能超过接收方通告的 rwnd（同时还受 cwnd 限制）。"],
+      ["零窗口", "rwnd=0 时暂停普通数据；发送方启动持续计时器并发送窗口探测。"],
+      ["防止死锁", "若“窗口已恢复”的通告丢失，持续计时器可触发探测，让双方重新同步。"]
+    ],
+    questions: [
+      q("w1", "single", "TCP 流量控制主要防止？", ["路由表过大", "接收方缓存溢出", "IP 地址不足", "CRC 余数非零"], "接收方缓存溢出", "接收方用 rwnd 告知可接收能力。"),
+      q("w2", "single", "接收方通告 rwnd=0 后，发送方应？", ["继续全速发送", "暂停普通数据并启用持续计时器", "关闭连接", "把 cwnd 设为无穷"], "暂停普通数据并启用持续计时器", "持续计时器用于避免零窗口死锁。"),
+      q("w3", "judge", "rwnd 越小，发送方允许在途的未确认数据通常应越少。", ["正确", "错误"], "正确", "发送方必须尊重接收方当前可用空间。"),
+      q("w4", "fill", "流量控制的关键变量是接收窗口____。", [], "rwnd", "rwnd = receiver window。")
+    ]
+  },
+  {
+    id: "congestion", number: 11, title: "TCP 拥塞控制", short: "拥塞控制", must: true,
+    pdf: "PDF 第 10 页", book: "教材 P243",
+    tags: ["必考", "曲线题"], visual: "congestion",
+    intro: "流量控制怕接收方杯子装不下；拥塞控制怕整条路堵死。发送方用 cwnd 试探网络容量，看到丢包信号就收敛。",
+    memory: "实际可用发送窗口 = min(rwnd, cwnd)；拥塞控制管网络受不受得了。",
+    exam: "慢开始阶段 cwnd 从小值指数增长，达到 ssthresh 后进入拥塞避免并线性增长。发生超时时，ssthresh 通常减半，cwnd 回到较小值；收到 3 个重复 ACK 时触发快重传并通常配合快恢复。",
+    common: "根据事件画 cwnd 曲线；比较流量控制与拥塞控制。",
+    error: "把慢开始理解成线性增长；认为 3 个重复 ACK 与超时的处理完全相同。",
+    terms: [
+      ["拥塞窗口 cwnd", "发送方依据网络拥塞程度维护的窗口。"],
+      ["慢开始", "名字叫“慢”，实际按 RTT 指数增长，用于快速试探容量。"],
+      ["拥塞避免", "cwnd 达到 ssthresh 后改为线性增长，试探更谨慎。"],
+      ["超时", "通常视为严重拥塞：ssthresh 减半，cwnd 回到较小值。"],
+      ["3 个重复 ACK", "推测单个报文丢失但网络仍有流动，触发快重传和快恢复。"],
+      ["与流量控制区别", "流量控制看接收方 rwnd；拥塞控制看网络 cwnd、ssthresh。"]
+    ],
+    questions: [
+      q("g1", "single", "慢开始阶段 cwnd 通常如何增长？", ["保持不变", "指数增长", "线性减小", "随机变化"], "指数增长", "每个 RTT 近似翻倍，直到达到门限或出现拥塞。"),
+      q("g2", "single", "发送方实际可用窗口应取？", ["max(rwnd,cwnd)", "rwnd+cwnd", "min(rwnd,cwnd)", "只看 cwnd"], "min(rwnd,cwnd)", "既不能压垮接收方，也不能压垮网络。"),
+      q("g3", "judge", "拥塞控制关注整个网络是否过载，关键变量包括 cwnd 和 ssthresh。", ["正确", "错误"], "正确", "这与关注接收方缓存的流量控制不同。"),
+      q("g4", "fill", "收到 3 个重复 ACK 时，TCP 会触发快重传，通常配合快____。", [], "恢复", "标准术语为快恢复。")
+    ]
+  },
+  {
+    id: "connection", number: 12, title: "TCP 三次握手与四次挥手", short: "TCP 连接管理", must: true,
+    pdf: "PDF 第 10–12 页", book: "教材 P247–P250",
+    tags: ["必考", "图题", "流程题"], visual: "connection",
+    intro: "握手是在连接前让双方都确认“我能发、能收，你也能发、能收”；挥手要分四步，因为 TCP 是全双工，两条方向必须分别关闭。",
+    memory: "握手 SYN、SYN+ACK、ACK；挥手 FIN、ACK、FIN、ACK；TIME-WAIT 等 2MSL。",
+    exam: "三次握手依次为 SYN=1,seq=x；SYN=1,ACK=1,seq=y,ack=x+1；ACK=1,seq=x+1,ack=y+1。四次挥手依次为 FIN、ACK、FIN、ACK。主动关闭方进入 TIME-WAIT 并等待 2MSL。",
+    common: "为什么必须三次握手？为什么四次挥手？为什么 TIME-WAIT 等 2MSL？",
+    error: "SYN 不消耗序号；把 ACK 与 FIN 必然合并；认为 TIME-WAIT 在被动关闭方。",
+    terms: [
+      ["SYN / ACK / FIN", "SYN 请求同步并建立连接；ACK 表示确认；FIN 表示本方向不再发送。"],
+      ["seq / ack", "seq 是本报文序号；ack 表示期望收到对方的下一个序号。SYN 和 FIN 各消耗一个序号。"],
+      ["为什么三次", "让双方确认收发能力，并防止失效旧连接请求造成错误连接。"],
+      ["半关闭", "一方发 FIN 后只关闭自己的发送方向，仍可接收另一方数据。"],
+      ["为什么四次", "TCP 全双工；被动方 ACK 后可能仍有数据，发完后才单独 FIN。"],
+      ["TIME-WAIT / 2MSL", "保证最后 ACK 丢失时可重发，并让旧连接报文在网络中消失。"]
+    ],
+    questions: [
+      q("h1", "single", "第二次握手报文正确的是？", ["SYN=1, seq=x", "SYN=1, ACK=1, seq=y, ack=x+1", "ACK=1, ack=x", "FIN=1, ack=x+1"], "SYN=1, ACK=1, seq=y, ack=x+1", "服务器既确认客户端 SYN，又发送自己的 SYN。"),
+      q("h2", "single", "主动关闭方等待 2MSL 的主要原因不包括？", ["最后 ACK 丢失时可重传", "让旧报文消失", "把 TCP 改为 UDP", "避免旧报文影响新连接"], "把 TCP 改为 UDP", "TIME-WAIT 与协议转换无关。"),
+      q("h3", "judge", "不携带数据的普通 ACK 通常不消耗序号，而 SYN 会消耗一个序号。", ["正确", "错误"], "正确", "因此第一次 SYN 后，客户端下一序号为 x+1。"),
+      q("h4", "sort", "拖动排列 TCP 四次挥手。", ["B→A：FIN", "A→B：ACK", "A→B：FIN", "B→A：ACK"], ["A→B：FIN", "B→A：ACK", "B→A：FIN", "A→B：ACK"], "主动方先 FIN，被动方先 ACK；被动方数据发完再 FIN，主动方最后 ACK。", "必考")
+    ]
+  }
+];
+
+function q(id, type, prompt, options, answer, explanation, difficulty = "基础") {
+  return { id, type, prompt, options, answer, explanation, difficulty };
+}
+
+const allQuestions = chapterData.flatMap(chapter => chapter.questions.map(question => ({
+  ...question, chapterId: chapter.id, chapterTitle: chapter.short
+})));
+
+const defaultState = () => ({
+  chapters: Object.fromEntries(chapterData.map(chapter => [chapter.id, { read: false, score: 0, attempts: 0, passed: false }])),
+  answers: {},
+  wrongs: {},
+  favorites: [],
+  lastChapter: "foundation",
+  theme: "light",
+  sessions: 1,
+  lastVisit: new Date().toISOString().slice(0, 10),
+  examHistory: []
+});
+
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    const base = defaultState();
+    if (!saved) return base;
+    const today = new Date().toISOString().slice(0, 10);
+    const merged = { ...base, ...saved, chapters: { ...base.chapters, ...saved.chapters } };
+    if (saved.lastVisit !== today) {
+      merged.sessions = (saved.sessions || 0) + 1;
+      merged.lastVisit = today;
+    }
+    return merged;
+  } catch {
+    return defaultState();
+  }
+}
+
+let state = loadState();
+let activeChapter = chapterData.find(c => c.id === state.lastChapter) || chapterData[0];
+let examQuestions = [];
+let examStartedAt = 0;
+let examTicker = null;
+let dijkstraState = null;
+let cwndState = { values: [1], ssthresh: 16, phase: "慢开始" };
+let visualTimers = [];
+
+function scheduleVisual(callback, delay) {
+  const timer = setTimeout(() => {
+    visualTimers = visualTimers.filter(id => id !== timer);
+    callback();
+  }, delay);
+  visualTimers.push(timer);
+  return timer;
+}
+
+function clearVisualTimers() {
+  visualTimers.forEach(clearTimeout);
+  visualTimers = [];
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  refreshChrome();
+}
+
+function getStats() {
+  const chapterStates = Object.values(state.chapters);
+  const completed = chapterStates.filter(c => c.passed).length;
+  const learned = chapterData.reduce((sum, c) => sum + (state.chapters[c.id]?.read ? c.terms.length : 0), 0);
+  const attempts = Object.values(state.answers);
+  const correct = attempts.filter(a => a.correct).length;
+  const accuracy = attempts.length ? Math.round(correct / attempts.length * 100) : 0;
+  const wrongCount = Object.values(state.wrongs).filter(w => !w.mastered).length;
+  const progress = Math.round(chapterData.reduce((sum, c) => {
+    const s = state.chapters[c.id];
+    return sum + (s.read ? 40 : 0) + Math.min(60, s.score * .6);
+  }, 0) / chapterData.length);
+  return { completed, learned, attempts: attempts.length, correct, accuracy, wrongCount, progress };
+}
+
+function refreshChrome() {
+  const stats = getStats();
+  $("#globalProgress").textContent = `${stats.progress}%`;
+  $("#globalProgressBar").style.width = `${stats.progress}%`;
+  $("#headerAccuracy").textContent = stats.attempts ? `${stats.accuracy}%` : "—";
+  $("#wrongBadge").textContent = stats.wrongCount;
+  document.documentElement.dataset.theme = state.theme;
+  renderNav();
+}
+
+function renderNav() {
+  $("#chapterNav").innerHTML = chapterData.map(chapter => {
+    const s = state.chapters[chapter.id];
+    const pct = Math.round((s.read ? 40 : 0) + Math.min(60, s.score * .6));
+    const hasWrong = Object.values(state.wrongs).some(w => w.chapterId === chapter.id && !w.mastered);
+    return `<button data-chapter="${chapter.id}" class="${activeChapter.id === chapter.id && $("#chapterView").classList.contains("active") ? "active" : ""}">
+      <span class="chapter-number">${String(chapter.number).padStart(2, "0")}</span>
+      <span class="chapter-nav-copy">
+        <b>${escapeHtml(chapter.short)} ${chapter.must ? '<i class="tiny-tag">必考</i>' : ""} ${hasWrong ? '<i class="wrong-dot" title="有错题"></i>' : ""}</b>
+        <small>${s.passed ? "PASSED" : s.read ? "LEARNING" : "NOT STARTED"} · ${pct}%</small>
+        <span class="mini-progress"><i style="width:${pct}%"></i></span>
+      </span>
+    </button>`;
+  }).join("");
+}
+
+function showView(name) {
+  $$(".view").forEach(view => view.classList.remove("active"));
+  const view = $(`#${name}View`);
+  if (view) view.classList.add("active");
+  $$(".nav-home").forEach(button => button.classList.toggle("active", name === "home"));
+  if (name === "home") {
+    $("#currentLabel").textContent = "学习总览";
+    renderHome();
+  } else if (name === "exam") {
+    $("#currentLabel").textContent = "模拟考试";
+    renderExamStart();
+  } else if (name === "wrongbook") {
+    $("#currentLabel").textContent = "错题本";
+    renderWrongbook();
+  }
+  closeSidebar();
+  closeDrawer();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  refreshChrome();
+}
+
+function openChapter(id) {
+  activeChapter = chapterData.find(c => c.id === id) || chapterData[0];
+  state.lastChapter = activeChapter.id;
+  saveState();
+  renderChapter(activeChapter);
+  $$(".view").forEach(view => view.classList.remove("active"));
+  $("#chapterView").classList.add("active");
+  $("#currentLabel").textContent = `第${activeChapter.number}章 · ${activeChapter.short}`;
+  closeSidebar();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  refreshChrome();
+}
+
+function renderHome() {
+  const stats = getStats();
+  const statItems = [
+    ["总章节", "12", "完整复习路线"],
+    ["已完成", stats.completed, stats.completed ? "继续保持" : "等待点亮"],
+    ["已学知识点", stats.learned, `共 ${chapterData.reduce((s, c) => s + c.terms.length, 0)} 个`],
+    ["总正确率", stats.attempts ? `${stats.accuracy}%` : "—", stats.attempts ? `${stats.correct}/${stats.attempts} 题` : "完成首题后统计"],
+    ["待攻克错题", stats.wrongCount, stats.wrongCount ? "建议优先复盘" : "目前很干净"],
+    ["学习次数", state.sessions, "按自然日累计"]
+  ];
+  $("#statGrid").innerHTML = statItems.map(([label, value, note]) =>
+    `<article class="stat-card"><span>${label}</span><b>${value}</b><small>${note}</small></article>`
+  ).join("");
+
+  const must = chapterData.filter(c => c.must);
+  const foundation = chapterData.filter(c => !c.must);
+  $("#focusMap").innerHTML = `<div class="focus-groups">
+    <div class="focus-group"><h3>必考重点 / MUST PASS</h3><div class="focus-tags">${must.map(c => `<button class="must-focus" data-chapter="${c.id}">${c.short}</button>`).join("")}</div></div>
+    <div class="focus-group"><h3>高频基础 / FOUNDATION</h3><div class="focus-tags">${foundation.map(c => `<button data-chapter="${c.id}">${c.short}</button>`).join("")}</div></div>
+  </div>`;
+
+  const advice = buildAdvice();
+  $("#todayAdvice").innerHTML = `<div class="advice-list">${advice.map((item, index) =>
+    `<div class="advice-item"><i>0${index + 1}</i><div><b>${item.title}</b><p>${item.copy}</p></div></div>`
+  ).join("")}</div>`;
+  $("#routeAdvice").textContent = advice[0].title;
+  $("#packetStatus").textContent = stats.progress ? "IN TRANSIT" : "READY";
+  $("#welcomeCopy").textContent = stats.progress ? `当前总进度 ${stats.progress}%，建议把正确率稳定在 70% 以上。` : "第一次来？没关系，我们从“比特是什么”开始。";
+  const last = chapterData.find(c => c.id === state.lastChapter);
+  $("#continueButton").innerHTML = `${stats.progress ? `继续：${last.short}` : "从第一章开始"} <span>→</span>`;
+}
+
+function buildAdvice() {
+  const weak = chapterData.map(c => ({ chapter: c, ...state.chapters[c.id] }))
+    .filter(x => x.attempts && x.score < 70).sort((a, b) => a.score - b.score)[0];
+  const firstMust = chapterData.find(c => c.must && !state.chapters[c.id].read);
+  const wrongs = Object.values(state.wrongs).filter(w => !w.mastered).sort((a, b) => b.count - a.count);
+  const items = [];
+  if (wrongs[0]) items.push({ title: `重练：${wrongs[0].chapterTitle}`, copy: `“${wrongs[0].prompt.slice(0, 28)}…” 已错 ${wrongs[0].count} 次。` });
+  if (weak) items.push({ title: `补强第 ${weak.chapter.number} 章`, copy: `当前章节正确率 ${weak.score}%，建议重看易错点后再测。` });
+  if (firstMust) items.push({ title: `优先拿下 ${firstMust.short}`, copy: `这是 PDF 标记的必考内容，建议今天完成讲解与小测。` });
+  if (!state.chapters.foundation.read) items.push({ title: "从网络基础开始", copy: "先分清发送时延和传播时延，后续章节会轻松很多。" });
+  items.push({ title: "完成一组模拟题", copy: "当必考章节过半后，用混合题检测知识切换能力。" });
+  return items.slice(0, 3);
+}
+
+function renderChapter(chapter) {
+  const s = state.chapters[chapter.id];
+  const pct = Math.round((s.read ? 40 : 0) + Math.min(60, s.score * .6));
+  $("#chapterContent").innerHTML = `
+    <header class="chapter-hero">
+      <div class="chapter-hero-top">
+        <div><span class="chapter-kicker">CHAPTER ${String(chapter.number).padStart(2, "0")} / 12</span><h1>${chapter.title}</h1><p>${chapter.intro}</p></div>
+        <div class="chapter-source"><span>${chapter.pdf}</span><span>${chapter.book}</span>${chapter.must ? "<span>考试等级：必考</span>" : "<span>考试等级：普通 / 高频</span>"}</div>
+      </div>
+      <div class="chapter-progress-box"><div class="progress-track"><i style="width:${pct}%"></i></div><small>掌握度 ${pct}%</small></div>
+    </header>
+    <nav class="chapter-tabs" aria-label="本章内容">
+      <button class="active" data-scroll="conceptCard">先听懂</button>
+      <button data-scroll="examCard">考试怎么写</button>
+      <button data-scroll="visualCard">可视化训练</button>
+      <button data-scroll="quizCard">章节小测</button>
+    </nav>
+    <div class="lesson-layout">
+      <div class="lesson-main">
+        <article class="lesson-card" id="conceptCard">
+          ${cardHead("01", "先告诉我这是什么", `${chapter.tags.map(t => `<i class="tag ${tagClass(t)}">${t}</i>`).join("")}`)}
+          <div class="card-body">
+            <div class="plain-talk supplement">${chapter.intro}</div>
+            <div class="definition-grid">${chapter.terms.map(([name, text]) => `<div class="definition-item"><b>${name}</b><p>${text}</p></div>`).join("")}</div>
+            <div class="memory-strip"><small>一句话记忆</small><b>${chapter.memory}</b></div>
+          </div>
+        </article>
+        <article class="lesson-card" id="examCard">
+          ${cardHead("02", "考试要怎么写", `<span class="source-chip">${chapter.book}</span>`)}
+          <div class="card-body">
+            <div class="exam-template pdf-original"><b>可直接背诵的答案模板</b><pre>${chapter.exam}</pre></div>
+            <div class="definition-grid">
+              <div class="definition-item"><b>考试常见问法</b><p>${chapter.common}</p></div>
+              <div class="definition-item"><b>最容易错在哪里</b><p>${chapter.error}</p></div>
+            </div>
+          </div>
+        </article>
+        <article class="lesson-card" id="visualCard">
+          ${cardHead("03", "可视化训练台", `<span class="source-chip">逐步演示</span>`)}
+          <div class="card-body"><div id="visualizer"></div></div>
+        </article>
+        <article class="lesson-card" id="quizCard">
+          ${cardHead("04", "章节小测", `<span class="source-chip">通过线 70%</span>`)}
+          <div class="card-body">
+            <div class="quiz-list">${chapter.questions.map(renderQuestion).join("")}</div>
+            <div class="button-row"><button class="primary-button" id="submitChapterQuiz">提交本章答案</button><button class="secondary-button" id="retryChapterQuiz">重新练习</button></div>
+            <div id="chapterQuizResult"></div>
+          </div>
+        </article>
+      </div>
+      <aside class="lesson-aside">
+        <div class="aside-card"><h3>本章来源</h3><p>${chapter.pdf}<br>${chapter.book}</p><p>页面内容以 PDF 整理结论为主；类比和交互题为明确补充。</p></div>
+        <div class="aside-card"><h3>学习操作</h3><div class="aside-actions">
+          <button class="primary-button" id="markReadButton">${s.read ? "已完成知识点学习 ✓" : "标记知识点已学完"}</button>
+          <button class="secondary-button" id="favoriteButton">${state.favorites.includes(chapter.id) ? "已收藏本章 ★" : "收藏本章 ☆"}</button>
+        </div></div>
+        <div class="aside-card"><h3>建议顺序</h3><ul><li>先读人话解释</li><li>背关键词与模板</li><li>动手操作训练器</li><li>小测达到 70%</li></ul></div>
+      </aside>
+    </div>`;
+  mountVisualizer(chapter.visual);
+  setupSortLists($("#chapterContent"));
+  renderExistingAnswers(chapter);
+}
+
+function cardHead(index, title, extra = "") {
+  return `<div class="lesson-card-head"><span><i class="card-index">${index}</i><h2>${title}</h2></span><span class="tag-row">${extra}</span></div>`;
+}
+
+function tagClass(tag) {
+  if (tag.includes("必考")) return "must";
+  if (tag.includes("易错")) return "error";
+  if (tag.includes("计算")) return "calc";
+  return "figure";
+}
+
+function renderQuestion(question, examMode = false) {
+  const name = `${examMode ? "exam-" : ""}${question.id}`;
+  let body = "";
+  if (["single", "judge", "multi", "figure"].includes(question.type)) {
+    body = `<div class="options">${question.options.map(option => `<label class="option"><input type="${question.type === "multi" ? "checkbox" : "radio"}" name="${name}" value="${escapeHtml(option)}"><span>${escapeHtml(option)}</span></label>`).join("")}</div>`;
+  } else if (question.type === "fill" || question.type === "calc") {
+    body = `<input class="answer-input" name="${name}" placeholder="输入答案" autocomplete="off">`;
+  } else if (question.type === "sort") {
+    body = `<div class="draggable-list sort-answer" data-question="${question.id}">${question.options.map(option => `<span class="draggable" draggable="true" data-value="${escapeHtml(option)}">${escapeHtml(option)}</span>`).join("")}</div><small class="visual-note">按住卡片拖动排序</small>`;
+  } else if (question.type === "match") {
+    const choices = shuffle(question.options.map(pair => pair[1]));
+    body = `<div class="options match-answer" data-question="${question.id}">${question.options.map(([left]) => `<label class="option"><b>${left}</b><select data-left="${left}"><option value="">选择作用</option>${choices.map(choice => `<option value="${choice}">${choice}</option>`).join("")}</select></label>`).join("")}</div>`;
+  }
+  return `<article class="quiz-item" data-qid="${question.id}" data-exam="${examMode}">
+    <div class="quiz-meta"><span class="difficulty">${question.difficulty}</span><span class="difficulty">${questionTypeLabel(question.type)}</span><span class="difficulty">${question.chapterTitle || ""}</span></div>
+    <h3>${escapeHtml(question.prompt)}</h3>${body}
+    <div class="feedback"></div>
+  </article>`;
+}
+
+function questionTypeLabel(type) {
+  return ({ single: "单选题", multi: "多选题", judge: "判断题", fill: "填空题", calc: "计算题", sort: "排序题", match: "匹配题", figure: "读图题" })[type] || "练习题";
+}
+
+function normalize(value) {
+  return String(value ?? "").trim().toLowerCase().replace(/\s+/g, "");
+}
+
+function collectAnswer(question, root) {
+  const item = root.querySelector(`[data-qid="${question.id}"]`);
+  if (!item) return null;
+  if (question.type === "single" || question.type === "judge" || question.type === "figure") return $(`input:checked`, item)?.value ?? "";
+  if (question.type === "multi") return $$(`input:checked`, item).map(input => input.value);
+  if (question.type === "fill" || question.type === "calc") return $(".answer-input", item)?.value ?? "";
+  if (question.type === "sort") return $$(".draggable", item).map(element => element.dataset.value);
+  if (question.type === "match") return $$("select", item).map(select => [select.dataset.left, select.value]);
+  return null;
+}
+
+function isCorrect(question, answer) {
+  if ((question.type === "fill" || question.type === "calc") && Array.isArray(question.answer)) {
+    return question.answer.some(candidate => normalize(candidate) === normalize(answer));
+  }
+  if (Array.isArray(question.answer)) {
+    if (!Array.isArray(answer)) return false;
+    if (Array.isArray(question.answer[0])) return question.answer.every(([left, right]) => answer.some(pair => pair[0] === left && pair[1] === right));
+    if (question.type === "multi") return [...question.answer].sort().join("|") === [...answer].sort().join("|");
+    return question.answer.map(normalize).join("|") === answer.map(normalize).join("|");
+  }
+  return normalize(question.answer) === normalize(answer);
+}
+
+function answerLabel(answer) {
+  if (Array.isArray(answer)) return Array.isArray(answer[0]) ? answer.map(pair => pair.join(" → ")).join("；") : answer.join(" → ");
+  return String(answer);
+}
+
+function evaluateQuestion(question, root, record = true) {
+  const item = root.querySelector(`[data-qid="${question.id}"]`);
+  const answer = collectAnswer(question, root);
+  const correct = isCorrect(question, answer);
+  item.classList.remove("correct", "wrong");
+  item.classList.add(correct ? "correct" : "wrong");
+  const feedback = $(".feedback", item);
+  feedback.classList.add("show");
+  feedback.innerHTML = `<b>${correct ? "回答正确" : "回答错误"}</b><br>${question.explanation}${correct ? "" : `<br>正确答案：${escapeHtml(answerLabel(question.answer))}`}`;
+  if (record) {
+    state.answers[question.id] = { correct, answer, at: Date.now() };
+    if (!correct) {
+      const chapter = chapterData.find(c => c.id === question.chapterId) || activeChapter;
+      const previous = state.wrongs[question.id];
+      state.wrongs[question.id] = {
+        questionId: question.id, chapterId: chapter.id, chapterTitle: chapter.short,
+        prompt: question.prompt, answer: answerLabel(question.answer), explanation: question.explanation,
+        count: (previous?.count || 0) + 1, mastered: false
+      };
+    } else if (state.wrongs[question.id]) {
+      state.wrongs[question.id].lastCorrect = Date.now();
+    }
+  }
+  return correct;
+}
+
+function renderExistingAnswers(chapter) {
+  chapter.questions.forEach(question => {
+    const saved = state.answers[question.id];
+    if (!saved) return;
+    const item = $(`[data-qid="${question.id}"]`, $("#chapterContent"));
+    if (!item) return;
+    if (question.type === "single" || question.type === "judge" || question.type === "figure") {
+      const input = $$("input", item).find(i => i.value === saved.answer);
+      if (input) input.checked = true;
+    } else if (question.type === "multi") {
+      $$("input", item).forEach(i => i.checked = saved.answer?.includes(i.value));
+    } else if (question.type === "fill" || question.type === "calc") {
+      $(".answer-input", item).value = saved.answer;
+    }
+  });
+  if (state.chapters[chapter.id].attempts) renderChapterResult(chapter);
+}
+
+function submitChapterQuiz() {
+  const chapter = activeChapter;
+  const root = $("#chapterContent");
+  const correct = chapter.questions.reduce((sum, question) => sum + (evaluateQuestion({ ...question, chapterId: chapter.id }, root) ? 1 : 0), 0);
+  const score = Math.round(correct / chapter.questions.length * 100);
+  const chapterState = state.chapters[chapter.id];
+  chapterState.score = Math.max(chapterState.score, score);
+  chapterState.attempts += 1;
+  chapterState.passed = chapterState.read && chapterState.score >= 70;
+  saveState();
+  renderChapterResult(chapter, score);
+  toast(score >= 70 ? `本章 ${score} 分，已达到通过线。` : `本章 ${score} 分，先复习易错点再试一次。`, score < 70);
+}
+
+function renderChapterResult(chapter, latest = state.chapters[chapter.id].score) {
+  const s = state.chapters[chapter.id];
+  const result = $("#chapterQuizResult");
+  if (!result) return;
+  result.innerHTML = `<div class="chapter-pass" style="margin-top:16px">
+    <div class="score-ring" style="--score:${latest}%"><b>${latest}%</b></div>
+    <h3>${s.passed ? "本章已掌握 ✓" : latest >= 70 && !s.read ? "分数已达标，再标记学完知识点即可过关" : "还差一点，再练一次"}</h3>
+    <p class="visual-note">最高分 ${s.score}% · 尝试 ${s.attempts} 次 · 通过条件：知识点已学 + 正确率 ≥ 70%</p>
+  </div>`;
+}
+
+function retryQuiz() {
+  $$(".quiz-item", $("#chapterContent")).forEach(item => {
+    item.classList.remove("correct", "wrong");
+    $$(".feedback", item).forEach(f => f.classList.remove("show"));
+    $$("input", item).forEach(input => input.checked = false);
+    $$(".answer-input", item).forEach(input => input.value = "");
+  });
+  toast("答题区已清空，可以重新练习。");
+}
+
+function setupSortLists(root = document) {
+  $$(".draggable-list", root).forEach(list => {
+    list.addEventListener("dragstart", event => event.target.classList.add("dragging"));
+    list.addEventListener("dragend", event => event.target.classList.remove("dragging"));
+    list.addEventListener("dragover", event => {
+      event.preventDefault();
+      const dragging = $(".dragging", list);
+      const after = $$(".draggable:not(.dragging)", list).find(item => event.clientX < item.getBoundingClientRect().left + item.offsetWidth / 2);
+      if (dragging) after ? list.insertBefore(dragging, after) : list.appendChild(dragging);
+    });
+  });
+}
+
+function mountVisualizer(type) {
+  clearVisualTimers();
+  const root = $("#visualizer");
+  const renderers = { delay: renderDelay, mux: renderMux, ppp: renderPPP, crc: renderCRC, csma: renderCSMA, ip: renderIP, routing: renderRouting, nat: renderNAT, transport: renderTransport, flow: renderFlow, congestion: renderCongestion, connection: renderConnection };
+  (renderers[type] || (() => {}))(root);
+  if (!$("[data-visual-reset]", root)) {
+    root.insertAdjacentHTML("beforeend", `<div class="button-row visual-reset-row"><button class="secondary-button" data-visual-reset>↺ 重置整个训练台</button></div>`);
+  }
+}
+
+function renderDelay(root) {
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>时延计算训练器</h3><small>【补充例题】输入后自动统一单位并展示步骤</small></div><span class="tag calc">计算题</span></div>
+    <div class="control-grid">
+      ${numberField("delayData", "数据长度", 8, [["Mbit","Mbit"],["Kbit","Kbit"],["Byte","Byte"],["KB","KB"]])}
+      ${numberField("delayRate", "发送速率 / 带宽", 4, [["Mbit/s","Mbit/s"],["Kbit/s","Kbit/s"],["bit/s","bit/s"]])}
+      ${numberField("delayDistance", "信道长度", 1000, [["km","km"],["m","m"]])}
+      ${numberField("delaySpeed", "传播速度", 200000, [["km/s","km/s"],["m/s","m/s"]])}
+      ${numberField("delayProcess", "处理时延", 1, [["ms","ms"],["s","s"]])}
+      ${numberField("delayQueue", "排队时延", 2, [["ms","ms"],["s","s"]])}
+    </div>
+    <div class="button-row"><button class="primary-button" id="calcDelay">计算并拆解</button><button class="secondary-button" data-visual-reset>重置参数</button></div>
+    <div class="result-box" id="delayResult">等待输入…</div>
+  </div>`;
+  $("#calcDelay").addEventListener("click", calculateDelay);
+  calculateDelay();
+}
+
+function numberField(id, label, value, units) {
+  return `<div class="field"><label for="${id}">${label}</label><div class="field-inline"><input id="${id}" type="number" min="0" step="any" value="${value}"><select id="${id}Unit">${units.map(([value, text]) => `<option value="${value}">${text}</option>`).join("")}</select></div></div>`;
+}
+
+function calculateDelay() {
+  const val = id => Number($(`#${id}`).value) || 0;
+  const unit = id => $(`#${id}Unit`).value;
+  const dataFactors = { Mbit: 1e6, Kbit: 1e3, Byte: 8, KB: 8e3 };
+  const rateFactors = { "Mbit/s": 1e6, "Kbit/s": 1e3, "bit/s": 1 };
+  const distanceFactors = { km: 1000, m: 1 };
+  const speedFactors = { "km/s": 1000, "m/s": 1 };
+  const timeFactors = { ms: .001, s: 1 };
+  const bits = val("delayData") * dataFactors[unit("delayData")];
+  const bps = val("delayRate") * rateFactors[unit("delayRate")];
+  const meters = val("delayDistance") * distanceFactors[unit("delayDistance")];
+  const speed = val("delaySpeed") * speedFactors[unit("delaySpeed")];
+  const process = val("delayProcess") * timeFactors[unit("delayProcess")];
+  const queue = val("delayQueue") * timeFactors[unit("delayQueue")];
+  const send = bps ? bits / bps : 0;
+  const propagation = speed ? meters / speed : 0;
+  const total = send + propagation + process + queue;
+  const product = propagation * bps;
+  $("#delayResult").innerHTML = `<div class="calc-steps">
+    <p>① 数据长度：${val("delayData")} ${unit("delayData")} = <strong>${bits.toLocaleString()} bit</strong></p>
+    <p>② 发送速率：${val("delayRate")} ${unit("delayRate")} = <strong>${bps.toLocaleString()} bit/s</strong></p>
+    <p>③ 发送时延 = L/R = ${bits}/${bps} = <strong>${formatTime(send)}</strong></p>
+    <p>④ 传播时延 = 距离/速度 = ${meters}/${speed} = <strong>${formatTime(propagation)}</strong></p>
+    <p>⑤ 总时延 = 发送 + 传播 + 处理 + 排队 = <strong>${formatTime(total)}</strong></p>
+    <p>⑥ 时延带宽积 = 传播时延 × 带宽 = <strong>${Math.round(product).toLocaleString()} bit</strong></p>
+  </div>`;
+}
+
+function formatTime(seconds) {
+  if (seconds >= 1) return `${Number(seconds.toFixed(6))} s`;
+  if (seconds >= .001) return `${Number((seconds * 1000).toFixed(4))} ms`;
+  return `${Number((seconds * 1e6).toFixed(2))} μs`;
+}
+
+function renderMux(root) {
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>复用与分用</h3><small>多个信号共享昂贵信道，再在终点拆开</small></div><span class="tag figure">动态图</span></div>
+    <div class="mux"><div class="signal-stack"><i class="signal a">信号 A</i><i class="signal b">信号 B</i><i class="signal c">信号 C</i></div><div class="mux-box">复用器<br>MUX</div><div class="shared-channel"><i></i></div><div class="mux-box">分用器<br>DEMUX</div><div class="signal-stack"><i class="signal a">A</i><i class="signal b">B</i><i class="signal c">C</i></div></div>
+    <div class="mux-comparison">
+      <div class="mux-row"><b>FDM</b><div class="mux-bar fdm"><i></i><i></i><i></i></div></div>
+      <div class="mux-row"><b>TDM</b><div class="mux-bar tdm">${"<i></i>".repeat(8)}</div></div>
+      <div class="mux-row"><b>STDM</b><div class="mux-bar stdm">${"<i></i>".repeat(8)}</div></div>
+    </div>
+    <p class="visual-note">为什么 STDM 更灵活？固定 TDM 即使某用户没数据也保留时间片；STDM 只把时隙分给当前有数据的用户。</p>
+    <div class="button-row"><button class="secondary-button" data-visual-reset>↺ 重新播放</button></div>
+  </div>`;
+}
+
+function renderPPP(root) {
+  const fields = [
+    ["F","0x7E","标志字段，帧开始/结束","考试写：首尾均有 F。易错：末尾 F 不能漏。"],
+    ["A","0xFF","地址字段，固定值","易错：不是目的 MAC 地址。"],
+    ["C","0x03","控制字段，固定值","PPP 不使用这里做编号确认。"],
+    ["协议","可变","指出信息字段装载的网络层协议","考试关键词：协议复用。"],
+    ["信息","可变","真正承载的数据部分","透明传输要保证特殊内容可原样通过。"],
+    ["FCS","校验值","帧检验序列，用于差错检测","易错：只能检错，不是自动纠错。"],
+    ["F","0x7E","结束标志","与开始标志相同。"]
+  ];
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>可点击 PPP 帧结构</h3><small>点击任一字段查看取值、作用和考试写法</small></div><span class="tag figure">图题</span></div>
+    <div class="frame-strip">${fields.map((f,i) => `<button class="frame-field" data-index="${i}"><span><b>${f[0]}</b><small>${f[1]}</small></span></button>`).join("")}</div>
+    <div class="result-box" id="pppInfo">点击一个字段开始。</div>
+    <h3>字段排序小练习</h3><div class="draggable-list" id="pppSort">${shuffle(fields.map(f => f[0])).map((f,i) => `<span class="draggable" draggable="true" data-value="${f}-${i}">${f}</span>`).join("")}</div>
+    <div class="button-row"><button class="interactive-button" id="checkPPPSort">检查顺序</button><button class="secondary-button" data-visual-reset>重置字段与排序</button></div>
+  </div>`;
+  $$(".frame-field", root).forEach(button => button.addEventListener("click", () => {
+    $$(".frame-field", root).forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+    const [name, value, use, tip] = fields[Number(button.dataset.index)];
+    $("#pppInfo").innerHTML = `<strong>${name}</strong> · ${value}<br>${use}<br><small>${tip}</small>`;
+  }));
+  setupSortLists(root);
+  $("#checkPPPSort").addEventListener("click", () => {
+    const order = $$("#pppSort .draggable").map(x => x.textContent).join(",");
+    const correct = ["F","A","C","协议","信息","FCS","F"].join(",");
+    toast(order === correct ? "PPP 字段顺序正确！" : "顺序未正确：F → A → C → 协议 → 信息 → FCS → F", order !== correct);
+  });
+}
+
+function renderCRC(root) {
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>CRC 动画计算器</h3><small>逐次展示模 2 除法（异或）</small></div><span class="tag must">必考</span></div>
+    <div class="control-grid"><div class="field"><label>原始数据 M</label><input id="crcData" value="1011001" inputmode="numeric"></div><div class="field"><label>生成多项式 P</label><input id="crcPoly" value="1101" inputmode="numeric"></div></div>
+    <div class="button-row"><button class="primary-button" id="runCRC">开始逐步计算</button><button class="secondary-button" id="verifyCRC">检验发送帧</button><button class="secondary-button" data-visual-reset>重置计算</button></div>
+    <div class="result-box" id="crcSummary">输入仅包含 0 和 1 的二进制串。</div>
+    <div class="xor-grid" id="crcSteps"></div>
+    <div class="error-cards">${["CRC 可以自动纠错","模 2 除法需要借位","冗余码位数随便取"].map((text,i) => `<button class="error-card" data-crc-error="${i}"><b>${text}</b><small>点击判断</small></button>`).join("")}</div>
+  </div>`;
+  $("#runCRC").addEventListener("click", () => runCRC(true));
+  $("#verifyCRC").addEventListener("click", () => runCRC(false));
+  $$("[data-crc-error]").forEach(button => button.addEventListener("click", () => {
+    const messages = ["错。CRC 主要负责差错检测，不能自动纠错。", "错。模 2 减法就是异或，不借位、不进位。", "错。冗余码位数必须等于生成多项式阶数 r。"];
+    toast(messages[Number(button.dataset.crcError)], true);
+  }));
+}
+
+function crcDivide(dividend, divisor) {
+  const work = dividend.split("").map(Number);
+  const div = divisor.split("").map(Number);
+  const steps = [];
+  for (let i = 0; i <= work.length - div.length; i++) {
+    if (work[i] === 1) {
+      const before = work.slice(i, i + div.length).join("");
+      for (let j = 0; j < div.length; j++) work[i + j] ^= div[j];
+      steps.push({ index: i, before, divisor, after: work.slice(i, i + div.length).join(""), work: work.join("") });
+    }
+  }
+  return { remainder: work.slice(-(div.length - 1)).join(""), steps };
+}
+
+function runCRC(animate) {
+  clearVisualTimers();
+  const data = $("#crcData").value.trim();
+  const poly = $("#crcPoly").value.trim();
+  if (!/^[01]+$/.test(data) || !/^1[01]*1$/.test(poly) || poly.length < 2) {
+    toast("请输入有效二进制串；生成多项式应首尾为 1。", true); return;
+  }
+  const r = poly.length - 1;
+  const padded = data + "0".repeat(r);
+  const { remainder, steps } = crcDivide(padded, poly);
+  const frame = data + remainder;
+  const verified = crcDivide(frame, poly).remainder.split("").every(bit => bit === "0");
+  $("#crcSummary").innerHTML = `① r = ${poly.length}−1 = <strong>${r}</strong><br>② 补 ${r} 个 0：${padded}<br>③ 余数 R = <strong>${remainder}</strong><br>④ 发送帧 M+R = <strong>${frame}</strong><br>⑤ 接收端再除：余数 ${"0".repeat(r)}，${verified ? "通过检验" : "检测到差错"}`;
+  const stepRoot = $("#crcSteps");
+  stepRoot.innerHTML = "";
+  const drawStep = (step, i) => {
+    const indent = "&nbsp;".repeat(step.index);
+    stepRoot.insertAdjacentHTML("beforeend", `<div class="xor-step"><span>${i + 1}</span><div>${indent}<span class="active-bits">${step.before}</span> ⊕ ${step.divisor} = ${step.after}<br><small>当前工作串：${step.work}（最高位被消去）</small></div></div>`);
+  };
+  if (animate) steps.forEach((step, i) => scheduleVisual(() => drawStep(step, i), i * 350));
+  else steps.forEach(drawStep);
+}
+
+function renderCSMA(root) {
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>CSMA/CD 碰撞模拟器</h3><small>A 已发送，但信号尚未到 B，B 也可能判断为空闲</small></div><span class="tag must">必考图题</span></div>
+    <div class="control-grid">
+      <div class="field"><label>单程传播时延 τ（ms）</label><input id="tauInput" type="range" min="1" max="20" value="10"><small id="tauValue">10 ms</small></div>
+      <div class="field"><label>B 比 A 晚发送（ms）</label><input id="offsetInput" type="range" min="0" max="25" value="6"><small id="offsetValue">6 ms</small></div>
+    </div>
+    <div class="bus-stage"><div class="host a">A</div><div class="host b">B</div><div class="bus-line"><i class="wave from-a"></i><i class="wave from-b"></i><b class="collision">!</b></div><p class="sim-status">点击开始，逐步观察。</p></div>
+    <div class="button-row"><button class="primary-button" id="startCSMA">开始模拟</button><button class="secondary-button" id="resetCSMA" data-visual-reset>重置</button></div>
+    <div class="result-box" id="csmaLog">判断规则：若 B 的发送时间差小于 τ，A 的信号尚未到达 B，可能发生碰撞。</div>
+  </div>`;
+  ["tauInput","offsetInput"].forEach(id => $(`#${id}`).addEventListener("input", () => {
+    $("#tauValue").textContent = `${$("#tauInput").value} ms`;
+    $("#offsetValue").textContent = `${$("#offsetInput").value} ms`;
+  }));
+  $("#startCSMA").addEventListener("click", startCSMA);
+}
+
+function startCSMA() {
+  clearVisualTimers();
+  resetCSMA();
+  const stage = $(".bus-stage");
+  const status = $(".sim-status", stage);
+  const tau = Number($("#tauInput").value), offset = Number($("#offsetInput").value);
+  const collision = offset < tau;
+  const steps = collision
+    ? ["1. A 监听到空闲，开始发送。","2. A 的信号还没传播到 B。","3. B 也监听到空闲，开始发送。","4. 两边信号相遇：发生碰撞！","5. A、B 停止并发送强化碰撞信号。","6. 双方随机退避，等待后重传。"]
+    : ["1. A 监听到空闲，开始发送。","2. A 的信号在 B 发送前到达 B。","3. B 监听到信道忙，不发送，因此没有碰撞。"];
+  stage.classList.add("running");
+  steps.forEach((text, i) => scheduleVisual(() => {
+    status.textContent = text;
+    if (text.includes("发生碰撞")) stage.classList.add("collided");
+    $("#csmaLog").innerHTML = steps.slice(0, i + 1).map(s => `<div>${s}</div>`).join("");
+  }, i * 650));
+  scheduleVisual(() => toast(collision ? `发生碰撞：时间差 ${offset} ms < τ ${tau} ms。` : `没有碰撞：B 在 ${offset} ms 时已经听到 A。`, collision), steps.length * 650);
+}
+
+function resetCSMA() {
+  const stage = $(".bus-stage");
+  if (!stage) return;
+  stage.classList.remove("running", "collided");
+  $(".sim-status", stage).textContent = "点击开始，逐步观察。";
+  $("#csmaLog").textContent = "为什么监听空闲仍会碰撞？因为传播需要时间，A 的信号还未到 B。";
+}
+
+function renderIP(root) {
+  const fields = ["版本","首部长度","区分服务","总长度","标识","标志","片偏移","TTL","协议","首部检验和","源地址","目的地址","选项","数据"];
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>IP 字段图 + 最长前缀训练</h3><small>先点击字段，再输入目标 IP 查看逐条匹配</small></div><span class="tag calc">计算题</span></div>
+    <div class="ip-frame">${fields.map((field,i) => `<button class="${i > 9 ? "wide" : ""} ${field === "数据" ? "fullrow" : ""}" data-ip-field="${field}">${field}</button>`).join("")}</div>
+    <div class="result-box" id="ipFieldInfo">点击字段查看作用。</div>
+    <div class="field" style="max-width:420px;margin-top:20px"><label>目标 IP 地址</label><input id="targetIP" value="192.168.1.130"></div>
+    <div class="button-row"><button class="primary-button" id="matchRoute">逐条匹配</button><button class="secondary-button" data-visual-reset>重置字段与路由</button></div>
+    <div id="routeResult"></div>
+  </div>`;
+  const descriptions = { 版本:"指出 IP 版本（IPv4 或 IPv6）。", 首部长度:"IPv4 首部长度，帮助定位数据起点。", 区分服务:"用于服务质量区分。", 总长度:"整个 IP 数据报的长度。", 标识:"分片重组时识别同一数据报。", 标志:"控制是否允许分片等。", 片偏移:"指出分片在原数据报中的位置。", TTL:"生存时间，每经路由器减 1，防止无限循环。", 协议:"指出上层协议，如 TCP、UDP、ICMP。", 首部检验和:"只检查 IPv4 首部。", 源地址:"发送端 IPv4 地址。", 目的地址:"接收端 IPv4 地址。", 选项:"可选控制信息。", 数据:"承载上层内容。" };
+  $$("[data-ip-field]").forEach(button => button.addEventListener("click", () => {
+    $$("[data-ip-field]").forEach(b => b.classList.remove("active")); button.classList.add("active");
+    $("#ipFieldInfo").innerHTML = `<strong>${button.dataset.ipField}</strong>：${descriptions[button.dataset.ipField]}`;
+  }));
+  $("#matchRoute").addEventListener("click", matchRoutes);
+}
+
+const routeTable = [
+  { network: "192.168.0.0", prefix: 16, next: "接口 1" },
+  { network: "192.168.1.0", prefix: 24, next: "接口 2" },
+  { network: "192.168.1.128", prefix: 25, next: "接口 3" },
+  { network: "0.0.0.0", prefix: 0, next: "默认路由" }
+];
+
+function ipToInt(ip) {
+  const parts = ip.split(".").map(Number);
+  if (parts.length !== 4 || parts.some(n => n < 0 || n > 255 || !Number.isInteger(n))) return null;
+  return parts.reduce((acc, n) => (acc * 256 + n) >>> 0, 0);
+}
+
+function matchRoutes() {
+  const target = $("#targetIP").value.trim();
+  const ip = ipToInt(target);
+  if (ip === null) { toast("请输入有效 IPv4 地址。", true); return; }
+  const matches = routeTable.map(route => {
+    const mask = route.prefix === 0 ? 0 : (0xffffffff << (32 - route.prefix)) >>> 0;
+    const matched = ((ip & mask) >>> 0) === ((ipToInt(route.network) & mask) >>> 0);
+    return { ...route, matched };
+  });
+  const best = matches.filter(r => r.matched).sort((a,b) => b.prefix - a.prefix)[0];
+  $("#routeResult").innerHTML = `<table class="compare-table" style="margin-top:14px"><thead><tr><th>路由表项</th><th>是否匹配</th><th>前缀长度</th><th>下一跳</th></tr></thead><tbody>${matches.map(r => `<tr class="${r === best ? "selected" : ""}"><td>${r.network}/${r.prefix}</td><td>${r.matched ? "✓ 匹配" : "× 不匹配"}</td><td>${r.prefix}</td><td>${r.next}${r === best ? " ← 选择" : ""}</td></tr>`).join("")}</tbody></table><p class="visual-note">最终选择 <b>${best.network}/${best.prefix}</b>，因为它在所有匹配项中前缀最长，描述的地址范围最具体。</p>`;
+}
+
+function renderRouting(root) {
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>RIP 距离向量练习器</h3><small>PDF 例题：J 到 D 的下一跳</small></div><span class="tag must">必考</span></div>
+    <table class="compare-table"><thead><tr><th>邻居 X</th><th>c(J,X)</th><th>Dₓ(D)</th><th>总开销</th></tr></thead><tbody id="ripRows"></tbody></table>
+    <div class="button-row"><button class="primary-button" id="calcRIP">计算最优下一跳</button><button class="secondary-button" data-visual-reset>重置整章训练</button></div>
+    <div class="result-box" id="ripResult">公式：c(J,X) + Dₓ(D)</div>
+  </div>
+  <div class="visual-stage" style="margin-top:16px">
+    <div class="stage-title"><div><h3>Dijkstra 逐轮训练器</h3><small>PDF 例题：以 D 为源点；E/G 同为 6 时先选谁均可</small></div><span class="tag figure">图题</span></div>
+    <div class="graph-wrap"><svg class="graph-svg" id="graphSvg" viewBox="0 0 520 350" aria-label="Dijkstra 图"></svg><div class="graph-log"><b>算法日志</b><ol id="dijkstraLog"></ol></div></div>
+    <div class="button-row"><button class="primary-button" id="dijkstraNext">下一步</button><button class="secondary-button" id="dijkstraReset">重置</button><button class="secondary-button" id="dijkstraRandom">随机低难度题</button></div>
+    <div class="result-box" id="dijkstraTable"></div>
+  </div>`;
+  const rip = [["A",8,40],["I",10,27],["H",12,8],["K",6,24]];
+  $("#ripRows").innerHTML = rip.map(row => `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>待计算</td></tr>`).join("");
+  $("#calcRIP").addEventListener("click", () => {
+    $$("#ripRows tr").forEach((tr,i) => tr.lastElementChild.textContent = `${rip[i][1]} + ${rip[i][2]} = ${rip[i][1] + rip[i][2]}`);
+    $$("#ripRows tr")[2].classList.add("selected");
+    $("#ripResult").innerHTML = "<strong>标准考试答案：</strong>J 对每个邻居 X 计算 c(J,X)+Dₓ(D)。比较 48、37、20、30，最小为 20，对应 H，因此 J 到 D 的下一跳为 H，最小开销为 20。";
+  });
+  initDijkstra();
+  $("#dijkstraNext").addEventListener("click", dijkstraNext);
+  $("#dijkstraReset").addEventListener("click", () => initDijkstra());
+  $("#dijkstraRandom").addEventListener("click", randomDijkstra);
+}
+
+const pdfGraph = {
+  nodes: { A:[70,75], B:[190,55], E:[285,90], G:[175,170], F:[345,180], C:[445,95], H:[275,265], D:[445,280] },
+  edges: [["A","B",2],["A","G",6],["B","C",7],["B","E",2],["E","G",1],["E","F",2],["G","H",4],["F","C",3],["F","H",2],["C","D",3],["H","D",2]],
+  source: "D"
+};
+
+function initDijkstra(graph = pdfGraph) {
+  dijkstraState = { graph, settled: [], distances: {}, previous: {}, finished: false };
+  Object.keys(graph.nodes).forEach(node => dijkstraState.distances[node] = node === graph.source ? 0 : Infinity);
+  drawGraph();
+  updateDijkstraPanel(`初始化：源点 ${graph.source} 距离为 0，其余为 ∞。`);
+}
+
+function neighbors(graph, node) {
+  return graph.edges.flatMap(([a,b,w]) => a === node ? [[b,w]] : b === node ? [[a,w]] : []);
+}
+
+function dijkstraNext() {
+  if (dijkstraState.finished) { toast("算法已完成，可重置或生成随机题。"); return; }
+  const unsettled = Object.keys(dijkstraState.distances).filter(n => !dijkstraState.settled.includes(n));
+  const current = unsettled.sort((a,b) => dijkstraState.distances[a] - dijkstraState.distances[b])[0];
+  if (!current || dijkstraState.distances[current] === Infinity) { dijkstraState.finished = true; return; }
+  dijkstraState.settled.push(current);
+  const updates = [];
+  neighbors(dijkstraState.graph, current).forEach(([next, weight]) => {
+    if (dijkstraState.settled.includes(next)) return;
+    const candidate = dijkstraState.distances[current] + weight;
+    if (candidate < dijkstraState.distances[next]) {
+      dijkstraState.distances[next] = candidate;
+      dijkstraState.previous[next] = current;
+      updates.push(`${next} 更新为 ${candidate}（经 ${current}）`);
+    }
+  });
+  if (dijkstraState.settled.length === Object.keys(dijkstraState.graph.nodes).length) dijkstraState.finished = true;
+  drawGraph(current);
+  updateDijkstraPanel(`选择 ${current}：它是未确定节点中暂定距离最小者。${updates.length ? " " + updates.join("；") + "。" : " 没有更短更新。"}`);
+}
+
+function drawGraph(candidate = "") {
+  const { graph, settled } = dijkstraState;
+  const edgeHtml = graph.edges.map(([a,b,w]) => {
+    const [x1,y1] = graph.nodes[a], [x2,y2] = graph.nodes[b];
+    return `<g><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line><text class="weight" x="${(x1+x2)/2}" y="${(y1+y2)/2-6}">${w}</text></g>`;
+  }).join("");
+  const nodeHtml = Object.entries(graph.nodes).map(([node,[x,y]]) => `<g class="${settled.includes(node) ? "settled" : ""} ${candidate === node ? "candidate" : ""}"><circle cx="${x}" cy="${y}" r="21"></circle><text class="node-label" x="${x}" y="${y+4}" text-anchor="middle">${node}</text></g>`).join("");
+  $("#graphSvg").innerHTML = edgeHtml + nodeHtml;
+}
+
+function updateDijkstraPanel(message) {
+  const { graph, settled, distances, previous } = dijkstraState;
+  const log = $("#dijkstraLog");
+  if (settled.length === 0) log.innerHTML = "";
+  log.insertAdjacentHTML("beforeend", `<li>${message}<br><b>N' = {${settled.join(", ") || graph.source}}</b></li>`);
+  $("#dijkstraTable").innerHTML = Object.keys(graph.nodes).map(node => `${node}: ${distances[node] === Infinity ? "∞" : distances[node]}${previous[node] ? `(${previous[node]})` : ""}`).join("　");
+  log.scrollTop = log.scrollHeight;
+}
+
+function randomDijkstra() {
+  const nodes = { A:[80,80], B:[250,55], C:[430,90], D:[120,270], E:[340,270] };
+  const edges = [["A","B",rand(1,7)],["B","C",rand(1,7)],["A","D",rand(1,7)],["B","D",rand(1,7)],["B","E",rand(1,7)],["C","E",rand(1,7)],["D","E",rand(1,7)]];
+  initDijkstra({ nodes, edges, source:"A" });
+  toast("已生成一张低难度随机图，源点为 A。");
+}
+function rand(a,b) { return Math.floor(Math.random()*(b-a+1))+a; }
+
+function renderNAT(root) {
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>NAT 地址转换动画</h3><small>观察源 IP 与端口怎样改变，回包怎样找到内网主机</small></div><span class="tag must">必考</span></div>
+    <div class="nat-scene"><div><div class="network-device">内网 A<br><b>192.168.1.10:5000</b></div><div class="network-device" style="margin-top:8px">内网 B<br><b>192.168.1.11:5001</b></div></div><div class="packet-path" id="natPath1"><i></i></div><div class="network-device router">NAT 路由器<br><b>203.0.113.8</b></div><div class="network-device">公网服务器<br><b>8.8.8.8:443</b></div></div>
+    <div class="button-row"><button class="primary-button" id="natNext">下一步</button><button class="secondary-button" id="natReset" data-visual-reset>重置</button></div>
+    <div class="result-box" id="natLog">步骤 0：等待内网主机发送。</div>
+    <table class="compare-table nat-table"><thead><tr><th>内部地址</th><th>公网映射</th><th>状态</th></tr></thead><tbody id="natRows"><tr><td colspan="3">转换表为空</td></tr></tbody></table>
+  </div>`;
+  let step = 0;
+  $("#natNext").addEventListener("click", () => {
+    step = (step % 5) + 1;
+    const logs = [
+      "A 发出数据包：源 192.168.1.10:5000，目的 8.8.8.8:443。",
+      "NAT 修改源地址：203.0.113.8:40001，并写入转换表。",
+      "公网服务器只看到公网源地址，并向 203.0.113.8:40001 返回。",
+      "NAT 查表，把目的地址改回 192.168.1.10:5000。",
+      "回包准确交给内网 A；B 可通过另一端口共享同一公网 IP。"
+    ];
+    $("#natLog").innerHTML = `<strong>步骤 ${step}</strong>：${logs[step-1]}`;
+    $("#natPath1").classList.remove("running"); void $("#natPath1").offsetWidth; $("#natPath1").classList.add("running");
+    if (step >= 2) $("#natRows").innerHTML = `<tr class="selected"><td>192.168.1.10:5000</td><td>203.0.113.8:40001</td><td>活动</td></tr>${step === 5 ? '<tr><td>192.168.1.11:5001</td><td>203.0.113.8:40002</td><td>活动</td></tr>' : ""}`;
+  });
+  $("#natReset").addEventListener("click", () => { step=0; $("#natLog").textContent="步骤 0：等待内网主机发送。"; $("#natRows").innerHTML='<tr><td colspan="3">转换表为空</td></tr>'; });
+}
+
+function renderTransport(root) {
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>UDP 与 TCP / 滑动窗口</h3><small>端口让一台主机中的多个应用共享网络</small></div><span class="tag figure">动态图</span></div>
+    <table class="compare-table"><thead><tr><th>对比点</th><th>UDP</th><th>TCP</th></tr></thead><tbody>
+      <tr><td>连接</td><td>无连接</td><td>面向连接</td></tr><tr><td>可靠性</td><td>尽最大努力</td><td>可靠交付</td></tr><tr><td>数据视角</td><td>面向报文</td><td>面向字节流</td></tr><tr><td>特点</td><td>开销小、实时性好</td><td>有序、全双工</td></tr>
+    </tbody></table>
+    <div style="margin-top:22px"><b>连续 ARQ：拖动窗口</b><div class="frame-strip" id="windowFrames" style="margin-top:10px">${[1,2,3,4,5,6,7,8].map(n => `<div class="frame-field ${n<=4 ? "active" : ""}"><b>${n}</b><small>${n<=4 ? "可发送" : "等待"}</small></div>`).join("")}</div>
+    <div class="button-row"><button class="interactive-button" id="slideWindow">收到累计确认，窗口右移</button><button class="secondary-button" data-visual-reset>重置滑动窗口</button></div><p class="visual-note" id="windowNote">窗口允许 1–4 号分组连续发送，不必逐个停等。</p></div>
+  </div>`;
+  let start=1;
+  $("#slideWindow").addEventListener("click", () => {
+    start = Math.min(5,start+1);
+    $$("#windowFrames .frame-field").forEach((el,i) => { const active=i+1>=start&&i+1<start+4; el.classList.toggle("active",active); $("small",el).textContent=active?"可发送":i+1<start?"已确认":"等待"; });
+    $("#windowNote").textContent=`累计确认到 ${start-1}，窗口滑到 ${start}–${Math.min(8,start+3)}。`;
+  });
+}
+
+function renderFlow(root) {
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>TCP 流量控制动画</h3><small>改变发送/接收速率与缓存，观察 rwnd</small></div><span class="tag must">必考</span></div>
+    <div class="control-grid">
+      <div class="field"><label>发送速率 <b id="sendRateValue">8</b></label><input id="sendRate" type="range" min="1" max="12" value="8"></div>
+      <div class="field"><label>接收处理速率 <b id="receiveRateValue">5</b></label><input id="receiveRate" type="range" min="1" max="12" value="5"></div>
+      <div class="field"><label>接收缓存大小 <b id="bufferSizeValue">10</b></label><input id="bufferSize" type="range" min="4" max="16" value="10"></div>
+    </div>
+    <div class="tcp-scene" style="margin-top:20px"><div class="network-device">发送方缓存<br><b id="senderState">准备发送</b></div><div class="packet-path running"><i></i></div><div><div class="buffer" id="receiveBuffer"></div></div><div class="rwnd-gate">rwnd<br><b id="rwndValue">10</b></div></div>
+    <div class="result-box" id="flowLog"></div>
+    <div class="button-row"><button class="primary-button" id="flowTick">传输一轮</button><button class="secondary-button" id="zeroWindow">模拟 rwnd=0</button><button class="secondary-button" id="reopenWindow">重新通告窗口</button><button class="secondary-button" data-visual-reset>重置流量控制</button></div>
+    <p class="memory-strip"><b>流量控制管的是接收方受不受得了。</b></p>
+  </div>`;
+  let occupied=0, forcedZero=false;
+  const update = action => {
+    const send=Number($("#sendRate").value), receive=Number($("#receiveRate").value), size=Number($("#bufferSize").value);
+    if (action==="tick" && !forcedZero) occupied=clamp(occupied+send-receive,0,size);
+    if (action==="zero") { forcedZero=true; occupied=size; }
+    if (action==="reopen") { forcedZero=false; occupied=Math.floor(size/3); }
+    const rwnd=forcedZero?0:size-occupied;
+    $("#receiveBuffer").innerHTML="<i></i>".repeat(occupied);
+    $("#rwndValue").textContent=rwnd;
+    $("#senderState").textContent=rwnd===0?"暂停普通数据":send>receive?"需要减慢":"稳定发送";
+    $("#flowLog").innerHTML=rwnd===0?`<strong>rwnd = 0</strong>：发送方暂停普通数据，启动持续计时器并定期发送窗口探测，防止“窗口已恢复”通告丢失导致死锁。`:`缓存占用 ${occupied}/${size}，接收方通告 rwnd=${rwnd}。${send>receive?"发送比处理快，缓存压力上升，发送方必须服从更小的 rwnd。":"接收方处理跟得上，窗口仍有空间。"}`;
+  };
+  ["sendRate","receiveRate","bufferSize"].forEach(id=>$(`#${id}`).addEventListener("input",()=>{ $(`#${id}Value`).textContent=$(`#${id}`).value; update(); }));
+  $("#flowTick").addEventListener("click",()=>update("tick")); $("#zeroWindow").addEventListener("click",()=>update("zero")); $("#reopenWindow").addEventListener("click",()=>update("reopen")); update();
+}
+
+function renderCongestion(root) {
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>cwnd 变化曲线</h3><small>点击事件观察慢开始、拥塞避免、超时与快速恢复</small></div><span class="tag must">必考曲线</span></div>
+    <svg class="cwnd-chart" id="cwndChart" viewBox="0 0 760 330" aria-label="拥塞窗口变化曲线"></svg>
+    <div class="button-row"><button class="interactive-button" id="nextRTT">正常经过 1 RTT</button><button class="interactive-button" id="timeoutEvent">模拟超时</button><button class="interactive-button" id="dupAckEvent">3 个重复 ACK</button><button class="secondary-button" id="resetCwnd" data-visual-reset>重置</button></div>
+    <div class="result-box" id="cwndLog"></div>
+    <table class="compare-table" style="margin-top:16px"><thead><tr><th>对比点</th><th>流量控制</th><th>拥塞控制</th></tr></thead><tbody><tr><td>关注对象</td><td>接收方</td><td>整个网络</td></tr><tr><td>目的</td><td>防止接收缓存溢出</td><td>防止网络拥塞</td></tr><tr><td>关键变量</td><td>rwnd</td><td>cwnd、ssthresh</td></tr><tr><td>一句话</td><td>接收方受不受得了</td><td>网络受不受得了</td></tr></tbody></table>
+  </div>`;
+  $("#nextRTT").addEventListener("click",()=>changeCwnd("normal")); $("#timeoutEvent").addEventListener("click",()=>changeCwnd("timeout")); $("#dupAckEvent").addEventListener("click",()=>changeCwnd("dup")); $("#resetCwnd").addEventListener("click",()=>{cwndState={values:[1],ssthresh:16,phase:"慢开始"};drawCwnd("已重置：cwnd=1，ssthresh=16。");}); drawCwnd("慢开始：cwnd 从小值开始指数增长。");
+}
+
+function changeCwnd(event) {
+  const current=cwndState.values.at(-1);
+  let next=current, explanation="";
+  if(event==="normal"){
+    if(current<cwndState.ssthresh){next=Math.min(current*2,32);cwndState.phase="慢开始";explanation=`正常 ACK：慢开始阶段，cwnd 从 ${current} 指数增至 ${next}。`;}
+    else{next=Math.min(current+1,32);cwndState.phase="拥塞避免";explanation=`达到 ssthresh，进入拥塞避免，cwnd 从 ${current} 线性增至 ${next}。`;}
+  }else if(event==="timeout"){
+    cwndState.ssthresh=Math.max(2,Math.floor(current/2));next=1;cwndState.phase="慢开始";explanation=`发生超时：认为拥塞严重，ssthresh=${cwndState.ssthresh}，cwnd 回到 1，重新慢开始。`;
+  }else{
+    cwndState.ssthresh=Math.max(2,Math.floor(current/2));next=cwndState.ssthresh+3;cwndState.phase="快恢复";explanation=`收到 3 个重复 ACK：触发快重传；ssthresh=${cwndState.ssthresh}，进入快恢复，cwnd 调整为 ${next}。`;
+  }
+  cwndState.values.push(next); if(cwndState.values.length>18)cwndState.values.shift(); drawCwnd(explanation);
+}
+
+function drawCwnd(explanation) {
+  const svg=$("#cwndChart"), values=cwndState.values, w=700,h=260,x0=42,y0=285,max=32;
+  const points=values.map((v,i)=>`${x0+i*(w/17)},${y0-v/max*h}`).join(" ");
+  svg.innerHTML=`${[0,8,16,24,32].map(v=>`<line class="grid" x1="${x0}" y1="${y0-v/max*h}" x2="${x0+w}" y2="${y0-v/max*h}"></line><text x="10" y="${y0-v/max*h+4}">${v}</text>`).join("")}<line class="axis" x1="${x0}" y1="20" x2="${x0}" y2="${y0}"></line><line class="axis" x1="${x0}" y1="${y0}" x2="${x0+w}" y2="${y0}"></line><line class="threshold" x1="${x0}" y1="${y0-cwndState.ssthresh/max*h}" x2="${x0+w}" y2="${y0-cwndState.ssthresh/max*h}"></line><text x="${x0+w-100}" y="${y0-cwndState.ssthresh/max*h-7}">ssthresh=${cwndState.ssthresh}</text><polyline class="curve" points="${points}"></polyline>${values.map((v,i)=>`<circle cx="${x0+i*(w/17)}" cy="${y0-v/max*h}" r="4" fill="var(--cyan)"></circle>`).join("")}<text x="${x0+w-50}" y="315">RTT →</text><text x="0" y="15">cwnd</text>`;
+  $("#cwndLog").innerHTML=`<strong>${cwndState.phase}</strong> · ${explanation}<br>考试写法：${cwndState.phase==="慢开始"?"cwnd 指数增长，达到 ssthresh 后转入拥塞避免。":cwndState.phase==="拥塞避免"?"cwnd 线性增长，谨慎探测可用容量。":"收到 3 个重复 ACK，执行快重传并配合快恢复。"}`;
+}
+
+function renderConnection(root) {
+  root.innerHTML = `<div class="visual-stage">
+    <div class="stage-title"><div><h3>TCP 连接管理时序动画</h3><small>每一步同时看报文、序号和状态</small></div><span class="tag must">必考</span></div>
+    <div class="button-row"><button class="interactive-button active" id="handshakeMode">三次握手</button><button class="interactive-button" id="teardownMode">四次挥手</button></div>
+    <div id="sequenceRoot"></div>
+    <div class="button-row"><button class="primary-button" id="sequenceNext">下一步</button><button class="secondary-button" id="sequenceReset" data-visual-reset>重置</button></div>
+    <div class="result-box" id="sequenceLog"></div>
+  </div>`;
+  let mode="handshake", step=0;
+  const sequences={
+    handshake:{left:"客户端 A",right:"服务器 B",messages:[
+      ["SYN=1, seq=x","A→B","A 主动打开，进入 SYN-SENT。SYN 消耗一个序号。"],
+      ["SYN=1, ACK=1, seq=y, ack=x+1","B→A","B 确认 A，同时发自己的 SYN，进入 SYN-RCVD。"],
+      ["ACK=1, seq=x+1, ack=y+1","A→B","A 确认 B，双方进入 ESTABLISHED。普通空 ACK 通常不消耗序号。"]
+    ]},
+    teardown:{left:"主动关闭方 A",right:"被动关闭方 B",messages:[
+      ["FIN=1, seq=u","A→B","A 关闭发送方向，进入 FIN-WAIT-1；FIN 消耗一个序号。"],
+      ["ACK=1, ack=u+1","B→A","B 确认，A 进入 FIN-WAIT-2；B 可能还有数据要发送。"],
+      ["FIN=1, ACK=1, seq=w, ack=u+1","B→A","B 数据发完后关闭自己的发送方向。"],
+      ["ACK=1, ack=w+1","A→B","A 最终确认并进入 TIME-WAIT，等待 2MSL。"]
+    ]}
+  };
+  const draw=()=>{
+    const seq=sequences[mode];
+    $("#sequenceRoot").innerHTML=`<div class="sequence-diagram"><div class="lifeline">${seq.left}</div><div class="message-stack">${seq.messages.map((m,i)=>`<div class="message-arrow ${m[1]==="B→A"?"reverse":""} ${i<step?"active":""}"><b>${m[0]}</b><br><span class="state-pill">${m[1]}</span></div>`).join("")}</div><div class="lifeline">${seq.right}</div></div>`;
+    $("#sequenceLog").innerHTML=step?`<strong>第 ${step} 步</strong>：${seq.messages[step-1][2]}<br>报文：${seq.messages[step-1][0]}`:"点击“下一步”开始。";
+  };
+  const setMode=next=>{mode=next;step=0;$("#handshakeMode").classList.toggle("active",mode==="handshake");$("#teardownMode").classList.toggle("active",mode==="teardown");draw();};
+  $("#handshakeMode").addEventListener("click",()=>setMode("handshake"));$("#teardownMode").addEventListener("click",()=>setMode("teardown"));
+  $("#sequenceNext").addEventListener("click",()=>{step=Math.min(step+1,sequences[mode].messages.length);draw();if(step===sequences[mode].messages.length)toast(mode==="handshake"?"连接建立完成。":"四次挥手完成；主动方还需等待 2MSL。");});
+  $("#sequenceReset").addEventListener("click",()=>{step=0;draw();});draw();
+}
+
+function renderExamStart() {
+  clearInterval(examTicker); $("#examTimer").textContent="00:00";
+  $("#examContent").innerHTML=`<div class="exam-start"><span class="eyebrow">12 题 · 混合难度</span><h2>准备好把知识从“会背”切换到“会做”了吗？</h2><ul><li>覆盖选择、判断、填空、计算与流程排序</li><li>每章随机抽取，交卷后给出章节诊断</li><li>答案仅保存在你的浏览器中</li></ul><br><button class="primary-button" id="startExam">开始模拟考试 <span>→</span></button></div>`;
+  $("#startExam").addEventListener("click", () => startExam());
+}
+
+function startExam(customQuestions = null) {
+  examQuestions = customQuestions || shuffle(chapterData).map(chapter => ({ ...shuffle(chapter.questions)[0], chapterId: chapter.id, chapterTitle: chapter.short }));
+  examStartedAt=Date.now();
+  clearInterval(examTicker);
+  examTicker=setInterval(()=>{const sec=Math.floor((Date.now()-examStartedAt)/1000);$("#examTimer").textContent=`${String(Math.floor(sec/60)).padStart(2,"0")}:${String(sec%60).padStart(2,"0")}`;},1000);
+  $("#examContent").innerHTML=`<div class="quiz-list">${examQuestions.map(q=>renderQuestion(q,true)).join("")}</div><div class="button-row"><button class="primary-button" id="submitExam">交卷并诊断</button></div>`;
+  setupSortLists($("#examContent")); $("#submitExam").addEventListener("click", submitExam);
+}
+
+function submitExam() {
+  clearInterval(examTicker);
+  const root=$("#examContent");
+  const correct=examQuestions.reduce((sum,question)=>sum+(evaluateQuestion(question,root,true)?1:0),0);
+  const score=Math.round(correct/examQuestions.length*100);
+  const byChapter={};
+  examQuestions.forEach(question=>{const ok=state.answers[question.id]?.correct;byChapter[question.chapterTitle]={correct:(byChapter[question.chapterTitle]?.correct||0)+(ok?1:0),total:(byChapter[question.chapterTitle]?.total||0)+1};});
+  state.examHistory.push({score,at:Date.now(),duration:Date.now()-examStartedAt});saveState();
+  root.insertAdjacentHTML("afterbegin",`<div class="exam-result-grid" style="margin-bottom:20px"><div class="panel"><div class="score-ring" style="--score:${score}%"><b>${score}%</b></div><h2>${score>=70?"模拟考通过":"需要继续补强"}</h2></div><div class="panel"><h2>章节诊断</h2><div class="chapter-breakdown">${Object.entries(byChapter).map(([name,r])=>`<div class="breakdown-row"><b>${name}</b><span class="progress-track"><i style="width:${r.correct/r.total*100}%"></i></span><span>${r.correct}/${r.total}</span></div>`).join("")}</div><p class="visual-note">推荐路径：先复习答错章节的“一句话记忆”和“考试怎么写”，再只练错题。</p></div></div>`);
+  $("#submitExam").disabled=true;toast(`模拟考试完成：${score} 分。`,score<70);
+}
+
+function renderWrongbook() {
+  const wrongs=Object.values(state.wrongs).filter(w=>!w.mastered).sort((a,b)=>b.count-a.count);
+  $("#wrongbookContent").innerHTML=wrongs.length?`<div class="wrong-list">${wrongs.map(w=>`<article class="wrong-card"><div><span class="eyebrow">${w.chapterTitle} · 错 ${w.count} 次</span><h3>${escapeHtml(w.prompt)}</h3><p><b>正确答案：</b>${escapeHtml(w.answer)}<br><b>解析：</b>${escapeHtml(w.explanation)}</p></div><button class="secondary-button" data-master="${w.questionId}">标记已掌握</button></article>`).join("")}</div>`:`<div class="empty-state"><span>✓</span><h2>错题本还是空的</h2><p>完成章节小测或模拟考试后，答错的题会自动收进这里。</p><button class="primary-button" data-view="exam">去做模拟题</button></div>`;
+}
+
+function openDrawer() {
+  const wrongs=Object.values(state.wrongs).filter(w=>!w.mastered).slice(0,3);
+  $("#drawerContent").innerHTML=wrongs.length?wrongs.map(w=>`<div class="wrong-card" style="margin-bottom:8px"><div><small>${w.chapterTitle} · ${w.count} 次</small><h3>${escapeHtml(w.prompt)}</h3></div></div>`).join(""):`<div class="empty-state"><span>✓</span><p>暂无错题</p></div>`;
+  $("#wrongDrawer").classList.add("open");$("#drawerBackdrop").classList.add("open");$("#wrongDrawer").setAttribute("aria-hidden","false");
+}
+function closeDrawer(){$("#wrongDrawer").classList.remove("open");$("#drawerBackdrop").classList.remove("open");$("#wrongDrawer").setAttribute("aria-hidden","true");}
+function closeSidebar(){$("#sidebar").classList.remove("open");}
+
+function practiceWrongs() {
+  const questions=Object.values(state.wrongs).filter(w=>!w.mastered).map(w=>allQuestions.find(q=>q.id===w.questionId)).filter(Boolean);
+  if(!questions.length){toast("当前没有待练错题。");return;}
+  showView("exam");startExam(questions);
+}
+
+function toast(message,error=false){
+  const el=document.createElement("div");el.className=`toast ${error?"error":""}`;el.textContent=message;$("#toastRegion").appendChild(el);setTimeout(()=>el.remove(),3600);
+}
+
+document.addEventListener("click", event => {
+  const visualReset = event.target.closest("[data-visual-reset]");
+  if (visualReset) {
+    mountVisualizer(activeChapter.visual);
+    toast("训练台已恢复到初始状态。");
+    return;
+  }
+  const viewButton=event.target.closest("[data-view]");
+  if(viewButton)showView(viewButton.dataset.view);
+  const chapterButton=event.target.closest("[data-chapter]");
+  if(chapterButton)openChapter(chapterButton.dataset.chapter);
+  const filterButton=event.target.closest("[data-filter='must']");
+  if(filterButton){const next=chapterData.find(c=>c.must&&!state.chapters[c.id].passed)||chapterData.find(c=>c.must);openChapter(next.id);}
+  const scrollButton=event.target.closest("[data-scroll]");
+  if(scrollButton){$(`#${scrollButton.dataset.scroll}`)?.scrollIntoView({behavior:"smooth"});$$(".chapter-tabs button").forEach(b=>b.classList.toggle("active",b===scrollButton));}
+  if(event.target.closest("#submitChapterQuiz"))submitChapterQuiz();
+  if(event.target.closest("#retryChapterQuiz"))retryQuiz();
+  if(event.target.closest("#markReadButton")){
+    const s=state.chapters[activeChapter.id];s.read=!s.read;s.passed=s.read&&s.score>=70;saveState();renderChapter(activeChapter);toast(s.read?"知识点已标记完成。":"已取消完成标记。");
+  }
+  if(event.target.closest("#favoriteButton")){
+    const id=activeChapter.id;state.favorites=state.favorites.includes(id)?state.favorites.filter(x=>x!==id):[...state.favorites,id];saveState();renderChapter(activeChapter);toast(state.favorites.includes(id)?"本章已收藏。":"已取消收藏。");
+  }
+  const masterButton=event.target.closest("[data-master]");
+  if(masterButton){state.wrongs[masterButton.dataset.master].mastered=true;saveState();renderWrongbook();toast("已标记掌握，不再出现在待练错题中。");}
+});
+
+$("#continueButton").addEventListener("click",()=>openChapter(state.lastChapter||"foundation"));
+$("#quickStart").addEventListener("click",()=>openChapter("foundation"));
+$("#quickContinue").addEventListener("click",()=>openChapter(state.lastChapter||"foundation"));
+$("#wrongBookButton").addEventListener("click",openDrawer);
+$("#drawerClose").addEventListener("click",closeDrawer);
+$("#drawerBackdrop").addEventListener("click",closeDrawer);
+$("#menuToggle").addEventListener("click",()=>$("#sidebar").classList.add("open"));
+$("#menuClose").addEventListener("click",closeSidebar);
+$("#themeToggle").addEventListener("click",()=>{state.theme=state.theme==="dark"?"light":"dark";saveState();toast(`已切换为${state.theme==="dark"?"深色":"浅色"}模式。`);});
+$("#resetButton").addEventListener("click",()=>{$("#confirmModal").classList.add("open");$("#confirmModal").setAttribute("aria-hidden","false");});
+$("#cancelReset").addEventListener("click",()=>{$("#confirmModal").classList.remove("open");$("#confirmModal").setAttribute("aria-hidden","true");});
+$("#confirmReset").addEventListener("click",()=>{localStorage.removeItem(STORAGE_KEY);state=defaultState();activeChapter=chapterData[0];$("#confirmModal").classList.remove("open");showView("home");toast("学习记录已重置。");});
+$("#practiceWrongButton").addEventListener("click",practiceWrongs);
+
+document.addEventListener("keydown", event => {
+  if(event.key==="Escape"){closeDrawer();closeSidebar();$("#confirmModal").classList.remove("open");}
+});
+
+refreshChrome();
+renderHome();
+
+  </script>
+</body>
+</html>
